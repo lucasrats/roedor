@@ -1,0 +1,112 @@
+.pack {
+  padding: 8px;
+}
+.cardPack {
+  background-position: center;
+  height: 227px;
+  width: 154px;
+  display:inline-block;
+  position: relative;
+}
+
+.cardPack {
+  transition: all 0.2s ease-in-out;
+}
+
+.cardPack.fechado {
+  transform: rotateY(180deg);
+}
+
+.cardPack.hidden {
+  transform: rotateY(180deg) translate(0, -500px);
+}
+
+
+.cardPack.aberto {
+  transform: rotateY(0deg)  ;
+
+}
+
+.cardPack.fechado .front {
+  opacity: 0;
+}
+
+.cardPack .back {
+  background: url(../img/card_back2.png);
+  background-repeat:no-repeat;
+  background-size:cover;
+  /*background-size:256px 382px;*/
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  opacity: 1;
+  transition: all 0.1s 0.1s ease-in-out;
+}
+
+.cardPack .front {
+  background-repeat:no-repeat;
+  background-size:cover;
+  /*
+  background-size:256px 382px;
+  */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  opacity: 1;
+  transition: all 0.1s 0.1s ease-in-out;
+}
+
+.cardPack.aberto .back {
+  opacity: 0;
+}
+
+
+.common {
+    box-shadow: 0 0 -10px 5px #888;
+}
+
+
+.rare {
+    box-shadow: 0 0 10px 5px #48f;
+}
+
+.epic {
+    box-shadow: 0 0 10px 5px #828;
+}
+
+.legendary {
+    box-shadow: 0 0 10px 5px #ff9900;
+}
+
+
+.template {
+  display: none;
+}
+
+.cardPack.out {
+  transform: rotateY(180deg) translate(0, 1000px) !important;
+}
+
+.card_glow {
+  position: absolute;
+/*
+  left: 27px;
+  top: 43px;
+
+
+  background-repeat:no-repeat;
+  background-size:cover;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  opacity: 1;
+  padding: 10px;
+
+  */
+}
