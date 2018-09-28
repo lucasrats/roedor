@@ -7,6 +7,31 @@ var Tournament = require('../models/tournament');
 var Participant = require('../models/participant');
 var moment = require('moment');
 
+function getMatches(req, res){
+	// en el middleware bindeamos una referencia de User en la request
+	var identity_user_id = req.user.sub;
+	var itemsPerPage = 15;
+
+	var page = 1;
+	if(req.params.page){
+		page = req.params.page;
+	}
+
+	Match.find({ $or:[{"home": identity_user_id}, {"away": identity_user_id}]}).sort('match_date').paginate(page, itemsPerPage).populate('tournament home away').exec((err, matches, total) => {
+		if(err) return res.status(500).send({message: 'Error en la petición'});
+
+		if(!matches) return res.status(404).send({message: 'No existen partidos'});
+
+		return res.status(200).send({
+			matches,
+			total,
+			pages: Math.ceil(total / itemsPerPage),
+		});
+
+	});
+
+}
+
 function getMatch(req, res){
 
 	var matchId = req.params.id;
@@ -304,6 +329,7 @@ function classesBan(req, res){
 }
 
 module.exports = {
+	getMatches,
 	getMatch,
 	addChatMatch,
 	sendResult,

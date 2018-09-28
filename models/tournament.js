@@ -18,7 +18,8 @@ var TournamentSchema = Schema({
 	lower_bracket: Boolean,
 	draft: Number,
 	chat: String,
-	byes: String
+	byes: String,
+	decks: Number
 });
 
 module.exports = mongoose.model('Tournament', TournamentSchema);

@@ -23,6 +23,9 @@ api.post('/tournament/addchat/:id', md_auth.ensureAuth, TournamentController.add
 api.post('/tournament/start/:id', md_auth.ensureAuth, TournamentController.startTournament);
 api.post('/tournament/nextround/:id', md_auth.ensureAuth, TournamentController.nextRoundSwiss);
 api.get('/tournament/:id/participants', TournamentController.getParticipants);
+api.get('/tournament/:tournament/participant/:user', TournamentController.getParticipant);
+api.post('/tournament/:tournament/participant/newDeck', md_auth.ensureAuth, TournamentController.addDeckCode);
+api.post('/tournament/:tournament/participant/newPack', md_auth.ensureAuth, TournamentController.addCardsPool);
 api.get('/tournament/:id/matches', TournamentController.getMatches);
 api.get('/tournament/:id/standings', TournamentController.getStandings);
 api.get('/tournament/:id/isadmin', md_auth.ensureAuth, TournamentController.isAdminTournament);

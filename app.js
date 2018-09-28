@@ -3,7 +3,6 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var path = require('path');
 
 var app = express();
 
@@ -34,9 +33,6 @@ app.use((req, res, next) => {
 
 // rutas
 // reescribimos las rutas del user_routes, anteponiendo un /api
-//PRODU
-app.use('/', express.static('client', {redirect: false}));
-//PRODU
 app.use('/api', user_routes);
 app.use('/api', follow_routes);
 app.use('/api', publication_routes);
@@ -45,10 +41,6 @@ app.use('/api', game_routes);
 app.use('/api', tournament_routes);
 app.use('/api', match_routes);
 app.use('/api', notification_routes);
-
-app.get('*', function(req, res, next){
-	res.sendFile(path.resolve('client/index.html'));
-});
 
 // exportamos la configuración
 module.exports = app;

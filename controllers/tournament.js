@@ -30,6 +30,7 @@ function saveTournament(req, res){
 		tournament.draft = params.draft;
 		tournament.chat = null;
 		tournament.byes = null;
+		tournament.decks = params.decks;
 
 		tournament.save((err, tournamentStored) => {
 			if(err) return res.status(500).send({message: 'Error al crear el torneo.'});
@@ -139,7 +140,7 @@ function joinTournament(req, res){
 			//participant.checkin = false;
 			//TODO Todo el rollo de que se active para hacer el checkin antes del comienzo y tal
 			participant.checkin = true;
-			participant.packs = tournament.packs;
+			participant.packs = tournament.draft;
 
 			participant.save((err, participantStored) => {
 				if(err) return res.status(500).send({message: 'Error al apuntarse al torneo'});
@@ -627,6 +628,21 @@ function getParticipants(req, res){
 
 }
 
+function getParticipant(req, res){
+
+	var tournamentId = req.params.tournament;
+	var userId = req.params.user;
+
+	Participant.findOne({'tournament': tournamentId, 'user': userId}).populate('user').exec((err, participant) => {
+		if(err) return res.status(500).send({message: 'Error al devolver al participante'});
+
+		if(!participant) return res.status(404).send({message: 'No hay participantes con ese id'});
+
+		return res.status(200).send({participant});
+	});
+
+}
+
 function getMatches(req, res){
 
 	var tournamentId = req.params.id;
@@ -731,6 +747,62 @@ function isAdminTournament(req, res){
 	});
 }
 
+function addDeckCode(req, res){
+
+	var tournamentId = req.params.tournament;
+	var update = req.body;
+
+	Participant.findOne({tournament: tournamentId, user: req.user.sub}, (err, participant) => {
+		if(err) return res.status(500).send({message: err});
+
+		if(!participant) return res.status(404).send({message: 'No existe ese jugador'});
+
+		if(!participant.decks){
+			var decksToStore = JSON.stringify([{name: update.name, code: update.code}]);
+		}
+		else{
+			var actualDeck = JSON.parse(participant.decks);
+			actualDeck.push({name: update.name, code: update.code});
+			var decksToStore = JSON.stringify(actualDeck);
+		}
+
+		Participant.update({_id: participant._id}, { decks: decksToStore }, { multi: false }, (err, participantUpdated) => {
+			if(err) return res.status(500).send({message: err});
+
+			if(!participantUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el mazo'});
+
+			return res.status(200).send({deck: {name: update.name, code: update.code}});
+		});
+
+	});
+
+}
+
+function addCardsPool(req, res){
+
+	var tournamentId = req.params.tournament;
+	var update = req.body;
+
+	Participant.findOne({tournament: tournamentId, user: req.user.sub}, (err, participant) => {
+		if(err) return res.status(500).send({message: err});
+
+		if(!participant) return res.status(404).send({message: 'No existe ese jugador'});
+
+		var poolToStore = JSON.stringify(update);
+		//console.log(poolToStore);
+
+		Participant.update({_id: participant._id}, { cards_pool: poolToStore, packs: participant.packs - 1}, { multi: false }, (err, participantUpdated) => {
+			if(err) return res.status(500).send({message: err});
+
+			if(!participantUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el mazo'});
+
+			return res.status(200).send({participantUpdated});
+		});
+
+	});
+
+}
+
 module.exports = {
 	saveTournament,
 	getTournament,
@@ -745,7 +817,10 @@ module.exports = {
 	startTournament,
 	nextRoundSwiss,
 	getParticipants,
+	getParticipant,
 	getMatches,
 	getStandings,
-	isAdminTournament
+	isAdminTournament,
+	addDeckCode,
+	addCardsPool
 }
