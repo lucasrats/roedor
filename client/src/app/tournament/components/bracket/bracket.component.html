@@ -1,0 +1,72 @@
+<div class="row">
+  <div class="col-lg-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">Lista de partidos</div>
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+              <tr>
+                  <th>Jugador</th>
+                  <th>Jugador</th>
+                  <th>Resultado</th>
+                  <th>Acciones</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let match of matches; let i = index" [ngClass]="{'table-warning': match.go_round == 0}">
+                  <td [ngStyle]="{'font-weight': match.homeScore > match.awayScore ? 'bold' : 'normal'}">
+                    <a href="perfil/{{match.home._id}}" *ngIf="match.home">{{match.home.nick}}</a>
+                    <span *ngIf="!match.home">TBD</span>
+                  </td>
+                  <td [ngStyle]="{'font-weight': match.homeScore < match.awayScore ? 'bold' : 'normal'}">
+                    <a href="perfil/{{match.away._id}}" *ngIf="match.away">{{match.away.nick}}</a>
+                    <span *ngIf="!match.away">TBD</span>
+                  </td>
+                  <td *ngIf="!match.isEditable && match.status >= 4">{{match.homeScore}} - {{match.awayScore}}</td>
+                  <td *ngIf="!match.isEditable && match.status < 4"> - </td>
+                  <td *ngIf="match.isEditable"><input type="text" size="2" [(ngModel)]="data.homeScore"> - <input type="text" size="2" [(ngModel)]="data.awayScore"></td>
+                  <th scope="row">
+                    <a class="btn btn-xs btn-success" href="tournament/{{tournament._id}}/match/{{match._id}}"><i class="fa fa-search"></i></a>
+                    <button class="btn btn-xs btn-success" *ngIf="_parentComponent.manageTournament && !match.isEditable" (click)="editRow(i)">
+                      <i class="fa fa-pencil-square-o"></i>
+                    </button>
+                    <button class="btn btn-xs btn-primary" *ngIf="_parentComponent.manageTournament && match.isEditable" (click)="saveRow(i)" data-toggle="Guardar">
+                      <i class="fa fa-floppy-o"></i>
+                    </button>
+                    <button class="btn btn-xs btn-danger" *ngIf="_parentComponent.manageTournament && match.isEditable" (click)="cancelRow(i)" data-toggle="Cancelar">
+                      <i class="fa fa-times"></i>
+                    </button>
+                  </th>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4" *ngIf="tournament && tournament.type == 'swiss'">
+    <div class="panel panel-default">
+      <div class="panel-heading" *ngIf="tournament">Clasificación</div>
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+              <tr>
+                  <th>Jugador</th>
+                  <th>Record</th>
+                  <th>Puntos</th>
+              </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let participant of participants">
+                <td><a href="perfil/{{participant.id}}">{{participant.nick}}</a></td>
+                <td>{{participant.wins}} - {{participant.losses}}</td>
+                <td>{{participant.points}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

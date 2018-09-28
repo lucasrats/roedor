@@ -1,0 +1,82 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">{{title}}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent" *ngIf="identity">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/home']" [routerLinkActive]="['active']">Inicio</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/tournaments']" [routerLinkActive]="['active']">Torneos</a>
+      </li>
+      <!--
+      <li class="nav-item">
+        <span class="glyphicon glyphicon-user"></span>
+        <a class="nav-link" [routerLink]="['/timeline']" [routerLinkActive]="['active']">Timeline</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/gente']" [routerLinkActive]="['active']">Gente</a>
+      </li>
+      -->
+
+      <li class="nav-item" *ngIf="identity.role == 'ROLE_ADMIN'">
+        <a class="nav-link" [routerLink]="['/admin']" [routerLinkActive]="['active']">ADMIN</a>
+      </li>
+
+    </ul>
+    <ul class="nav navbar-nav ml-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="setStatus1Notifications()">
+          <i class="fa fa-bell" ></i>
+          <span class="button__badge" *ngIf="notifications && notificationCount > 0">{{notifications.length}}</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <small>Marcar todas como leídas</small>
+          <div *ngFor="let notification of notifications">
+            <hr>
+            <a class="dropdown-item" href="">{{notification.type}}</a>
+            <ul>
+              <li><small>{{notification.timestamp | amDateFormat:'DD-MMM-YYYY'}}</small></li>
+              <li><button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Marcar como leída" (click)="readNotif(notification._id)">Marcar leída</button></li>
+            </ul>
+          </div>
+
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <!--
+        <a href="#"><img src="{{ url + 'get-image-user/' + identity.image }}" *ngIf="identity && identity.image" /></a>
+        <a href="#"><img src="assets/default_user.png" class="avatar-default" *ngIf="!identity && identity.image" /></a>
+        -->
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{identity.nick}}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <!-- <a class="dropdown-item" [routerLink]="['/perfil', identity._id]">Mi perfil</a> -->
+          <a class="dropdown-item" [routerLink]="['mis-datos']">Mis datos</a>
+          <a class="dropdown-item" [routerLink]="['mis-partidos']">Mis partidos</a>
+          <!--<a class="dropdown-item" [routerLink]="['/mensajes']" [routerLinkActive]="['active']">Mis mensajes</a>-->
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" (click)="logout()">Cerrar sesión</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent" *ngIf="!identity">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/login']" [routerLinkActive]="['active']">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/registro']" [routerLinkActive]="['active']">Registro</a>
+      </li>
+    </ul>
+  </div>
+
+</nav>
+
+<router-outlet></router-outlet>

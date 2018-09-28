@@ -1,0 +1,58 @@
+<div class="row" *ngIf="decks.length < tournament.decks">
+  <div class="col-lg-6">
+    <form #deckByCodeForm="ngForm" (ngSubmit)="onSubmitDeck(deckByCodeForm)">
+      <p>
+        <label>Nombre de mazo</label>
+  			<input type="text" id="name" name="name" #name="ngModel" [(ngModel)]="deckName" class="form-control" required />
+  			<span *ngIf="!name.valid && name.touched">
+  				El nombre es obligatorio
+  			</span>
+      </p>
+      <p>
+        <label>Código de mazo</label>
+        <textarea class="form-control" id="code" name="code" #code="ngModel" [(ngModel)]="deckCode" rows="6" (paste)="getDeckByCode($event.clipboardData.getData('text/plain'))" placeholder='Copia tu mazo aquí'></textarea>
+        <span class="alert alert-danger" *ngIf="status == 'error'">
+      		Ha ocurrido un error con el código, por favor, asegúrate que es correcto.
+      	</span>
+      </p>
+      <input type="submit" value="Enviar" class="btn btn-success" [disabled]="!deckByCodeForm.form.valid || status == 'error'" />
+    </form>
+
+  </div>
+  <div class="col-lg-6">
+    <div *ngFor="let card of deckByCode.cards">
+      <div class="card-list">
+        <ul>
+          <li class="card-frame {{card.rarity}}-card ">
+            <span class="card-cost">{{card.cost}}</span>
+            <span class="card-name">{{card.name}}</span>
+            <span class="card-count">{{card[1]}}</span>
+            <span class="card-image card-count-ex">
+              <img src="https://art.hearthstonejson.com/v1/tiles/{{card.id}}.png" height="40px">
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-sm" *ngFor="let deck of decks">
+      {{deck.name}}
+      <div *ngFor="let card of deck.deck.cards">
+        <div class="card-list">
+          <ul>
+            <li class="card-frame {{card.rarity}}-card ">
+              <span class="card-cost">{{card.cost}}</span>
+              <span class="card-name">{{card.name}}</span>
+              <span class="card-count">{{card[1]}}</span>
+              <span class="card-image card-count-ex">
+                <img src="https://art.hearthstonejson.com/v1/tiles/{{card.id}}.png" height="40px">
+              </span>
+      		  </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>

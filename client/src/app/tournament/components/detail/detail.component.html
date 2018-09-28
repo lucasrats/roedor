@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-8">
+    <h3>Chat de torneo</h3>
+    <div id="message-wrap" class="message-wrap">
+      <div id="msg-wrap" class="msg-wrap">
+          <div class="media msg" *ngFor="let chat of chatHistory">
+            <!--
+              <a class="pull-left" href="#">
+                  <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="#">
+              </a>
+            -->
+              <div class="media-body">
+                  <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
+                  <h5 class="media-heading">{{chat.user}}</h5>
+
+                  <small class="col-lg-10">{{chat.text}}</small>
+              </div>
+          </div>
+      </div>
+      <form #newChatForm="ngForm" (ngSubmit)="onSubmit(newChatForm, $event);">
+        <div class="send-wrap">
+            <textarea id="textChat" class="form-control send-message" rows="3" placeholder="Write a reply..."></textarea>
+        </div>
+        <div class="btn-panel">
+            <!--<button class=" col-lg-4 text-right btn   send-message-btn pull-right" role="button" (click)="addChatTournament()"><i class="fa fa-plus"></i> Send Message</button>-->
+            <input type="submit" value="Enviar" class="btn btn-success" [disabled]="!newChatForm.form.valid" />
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="col">
+  	<h3>Participantes</h3>
+  	<ul class="list-group">
+  	  <li *ngFor="let participant of this._parentComponent._tournamentService.participants" class="list-group-item d-flex justify-content-between align-items-center">
+  	    {{participant.user.nick}}
+  	    <span *ngIf="participant.checkin" class="glyphicon glyphicon-ok text-success"></span>
+  			<span *ngIf="!participant.checkin" class="glyphicon glyphicon-remove text-warning"></span>
+  	  </li>
+  	</ul>
+  </div>
+</div>

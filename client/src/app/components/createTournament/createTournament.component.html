@@ -1,0 +1,90 @@
+<div class="col-lg-8">
+	<h1 class="h1-strong">{{title}}</h1>
+
+	<div class="alert alert-success" *ngIf="status == 'success'">
+		Torneo dado de alta, <a [routerLink]="['/tournaments']"> búscalo aquí</a>
+	</div>
+
+	<div class="alert alert-danger" *ngIf="status == 'error'">
+		No ha podido completarse el alta del torneo, por favor, revisa los datos y prueba de nuevo.
+	</div>
+
+	<form #createTournamentForm="ngForm" (ngSubmit)="onSubmit(createTournamentForm)" class="col-lg-12">
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Nombre</label>
+  			<input type="text" name="name" #name="ngModel" [(ngModel)]="tournament.name" class="form-control" required />
+  			<span *ngIf="!name.valid && name.touched">
+  				El nombre es obligatorio
+  			</span>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Juego</label>
+        <select class="form-control" name="game" #game="ngModel" [(ngModel)]="tournament.game" required>
+          <option value="5a93e6c12571da136870cb61">Hearthstone</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="row">
+        <legend class="col-form-label col-sm-2 pt-0">Tipo torneo</legend>
+        <div *ngFor="let option of typesTournament">
+          <div class="col-sm-10">
+            <div class="form-check">
+              <input type="radio"
+               name="types"
+               value="{{option.value}}"
+               #types="ngModel"
+               [(ngModel)]="tournament.type"
+               class="form-check-input" />
+               <label class="form-check-label">{{option.desc}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-2">
+        <label for="max_players">Max. Jugadores</label>
+        <select id="max_players" name="max_players" class="form-control" #max_players="ngModel" [(ngModel)]="tournament.max_players" required>
+          <option value="2">2</option>
+					<option value="4">4</option>
+					<option value="8">8</option>
+					<option value="16">16</option>
+					<option value="32">32</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="bo">Best Of</label>
+        <select id="bo" name="bo" class="form-control" #bo="ngModel" [(ngModel)]="tournament.bo" required>
+          <option value="1">BO1</option>
+					<option value="3">BO3</option>
+					<option value="5">BO5</option>
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="bans">Baneos</label>
+        <input type="text" class="form-control" maxlength="1" id="bans" name="bans" #bans="ngModel" [(ngModel)]="tournament.bans" required pattern="^[0-9]$">
+      </div>
+			<div class="form-group col-md-2">
+        <label for="draft">Draft (nº de sobres)</label>
+        <input type="text" class="form-control" id="draft" name="draft" #draft="ngModel" [(ngModel)]="tournament.draft" required pattern="^[0-9]$">
+      </div>
+			<div class="form-group col-md-4">
+        <label for="decks">¿Envío de mazos por jugador?</label>
+        <input type="text" class="form-control" id="decks" name="decks" #decks="ngModel" [(ngModel)]="tournament.decks" required pattern="^[0-9]$" placeholder="Dejar a 0 si no requiere envío de mazos">
+      </div>
+    </div>
+		<div class="form-group">
+			<label for="bans">Fecha de inicio</label>
+			<input type="text" class="form-control" id="start_date" name="start_date" #start_date="ngModel" [(ngModel)]="tournament.start_date" required placeholder="DD/MM/AAAA">
+		</div>
+    <div class="form-group">
+      <label for="rules">Reglas del Torneo</label>
+      <textarea class="form-control" id="rules" name="rules" rows="3" #rules="ngModel" [(ngModel)]="tournament.rules"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!createTournamentForm.form.valid">Enviar</button>
+	</form>
+</div>

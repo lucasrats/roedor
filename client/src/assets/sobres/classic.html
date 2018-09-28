@@ -1,0 +1,185 @@
+<link rel="stylesheet" type="text/css" href="css/style_classic.css">
+
+<body>
+
+	<button> Abrir Pack </button>
+	<div class="pack">
+		<div class="card fechado common">
+			<div class="card_glow"></div>
+	    <div class="back"></div>
+	    <div class="front"></div>
+		</div>
+		<div class="card fechado common">
+			<div class="card_glow" style="box-shadow: none; -webkit-transition: box-shadow 600ms; transition: box-shadow 600ms;"></div>
+	    <div class="back"></div>
+	    <div class="front"></div>
+		</div>
+		<div class="card fechado common">
+			<div class="card_glow" style="box-shadow: none; -webkit-transition: box-shadow 600ms; transition: box-shadow 600ms;"></div>
+	    <div class="back"></div>
+	    <div class="front"></div>
+		</div>
+		<div class="card fechado common">
+			<div class="card_glow" style="box-shadow: none; -webkit-transition: box-shadow 600ms; transition: box-shadow 600ms;"></div>
+	    <div class="back"></div>
+	    <div class="front"></div>
+		</div>
+		<div class="card fechado rare">
+			<div class="card_glow" style="box-shadow: none; -webkit-transition: box-shadow 600ms; transition: box-shadow 600ms;"></div>
+	    <div class="back"></div>
+	    <div class="front"></div>
+		</div>
+	</div>
+	  
+</body>
+
+<script type="text/javascript" src="js/jquery.min.js"></script><style type="text/css"></style>
+<!--<script type="text/javascript" src="js/jquery-ui.min.js"></script>-->
+<!--<script type="text/javascript" src="js/rumble.min.js"></script>-->
+<!--<script type="text/javascript" src="js/browser.min.js"></script>-->
+<script type="text/javascript" src="js/functions.js"></script>
+<!--<script type="text/javascript" src="js/docready.js"></script>-->
+
+<script type="text/javascript">
+
+	// holds an array of total cards in set
+	var total_cards_in_set = [];
+	//var json_card_set = "data/Classic.enUS.json";
+	var json_card_set = "data/cards.collectible_es_ES.json";
+	//var image_prefix = "http:\/\/wow.zamimg.com\/images\/hearthstone\/cards\/eses\/medium\/";
+	var image_prefix = "http:\/\/wow.zamimg.com\/images\/hearthstone\/cards\/enus\/medium\/";
+	//var image_prefix = "http:\/\/media.services.zam.com\/v1\/media\/byName\/hs\/cards\/enus\/";
+	var image_postfix = ".png";
+	
+	//Initialize the card arrays
+	var common = [],
+		rare = [],
+		epic = [],
+		legendary = [];
+	
+	// Initialize the name of the card in they arrays
+	var common_name = [],
+		rare_name = [],
+		epic_name = [],
+		legendary_name = [];
+		
+		
+	//Tests for .ogg audio support, sets the default file type for the respective browser
+	var audioTest = new Audio(),
+		fileExt;
+	if (audioTest.canPlayType('audio/ogg')) {
+		fileExt = ".ogg";
+	} else {
+		fileExt = ".mp3";
+	}
+	
+	var allAudio = { //Audio to preload
+		announcer_epic: 			'audio/announcer_epic' + fileExt,
+		announcer_golden_common: 	'audio/announcer_golden_common' + fileExt,
+		announcer_golden_epic: 		'audio/announcer_golden_epic' + fileExt,
+		announcer_golden_legendary: 'audio/announcer_golden_legendary' + fileExt,
+		announcer_golden_rare: 		'audio/announcer_golden_rare' + fileExt,
+		announcer_legendary: 		'audio/announcer_legendary' + fileExt,
+		announcer_rare: 			'audio/announcer_rare' + fileExt,
+		card_hover: 				'audio/card_hover' + fileExt,
+		card_turn_over_common: 		'audio/card_turn_over_common' + fileExt,
+		card_turn_over_epic: 		'audio/card_turn_over_epic' + fileExt,
+		card_turn_over_legendary: 	'audio/card_turn_over_legendary' + fileExt,
+		card_turn_over_rare: 		'audio/card_turn_over_rare' + fileExt,
+		card_unhover: 				'audio/card_unhover' + fileExt,
+		done_fade: 					'audio/done_fade' + fileExt,
+		done_reveal: 				'audio/done_reveal' + fileExt,
+		menu_button_hover: 			'audio/menu_hover' + fileExt,
+		menu_open: 					'audio/menu_open' + fileExt,
+		pack_aura: 					'audio/pack_aura' + fileExt,
+		pack_grab: 					'audio/pack_grab' + fileExt,
+		pack_open: 					'audio/pack_open' + fileExt,
+		pack_release: 				'audio/pack_release' + fileExt,
+		shop_button_hover: 			'audio/shop_hover' + fileExt,
+		shop_open: 					'audio/shop_open' + fileExt,
+		shop_close: 				'audio/shop_close' + fileExt
+	}
+	
+	var volume = 0.5;
+	
+</script>
+
+<script>
+	
+	$(document).ready(function() {
+		buildCardArrays();
+	});
+	
+	var taxas = [
+	  [0.02, "lendario"],
+	  [0.07, "epico"],
+	  [0.16, "raro"],
+	  [0.75, "comum"]
+	];
+	
+	function criarCard(raridade) {
+	  var card = $(".exemplo").clone();
+	
+	  card.addClass(raridade);
+	  card.removeClass("exemplo");
+	  $(".pack").append(card);
+	  setTimeout(() =>  card.removeClass("hidden"), 100 + ( Math.random() * 200 ) );
+	}
+	
+	function gerarRaridade(temQueSerRaro) {
+	  var chance = Math.random();
+	
+	  for (var i = 0; i < taxas.length; i++) {
+	    var taxa = taxas[i];
+	
+	    if (chance < taxa[0]) {
+	      return temQueSerRaro ? taxa[1].replace("comum", "raro") : taxa[1];
+	    }
+	
+	    chance -= taxa[0];
+	  }
+	
+	  return "deu ruim";
+	}
+	
+	function gerarPack() {
+	  var cards = [];
+	  var temMaiorQueComum = false;
+	
+	  for (var i = 0; i < 5; i++) {
+	    var raridade = gerarRaridade(i == 4 && !temMaiorQueComum);
+	    if (raridade != "comum") temMaiorQueComum = true;
+	    cards.push(raridade);
+	  }
+	  return cards;
+	}
+	
+	function abrirPack(first) {
+	    $(".card", ".pack").each(function(i, card){
+	       
+	        setTimeout(() => $(card).addClass("out"), 150 + (Math.random() * 550));
+	      
+	    });
+	  
+	
+	    setTimeout(() => {
+	 var pack = gerarPack();
+	      $(".pack").empty();
+	
+	      pack.forEach(card => $(".pack").append(criarCard(card)));
+	
+	    }, first ? 1 : 1000);
+	}
+	
+	$("button").click(function() {
+	  buildCardArrays();
+	});
+	
+	$("body").on("click", ".card", function() {
+	  $(this).addClass("aberto");
+	  $(this).removeClass("fechado");
+	});
+	
+	//abrirPack(true);
+	
+</script>
