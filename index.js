@@ -5,6 +5,8 @@ var mongoose = require('mongoose');
 // express importamos directamente el fichero app.js que hemos configurado
 //var app = require('./app');
 var bodyParser = require('body-parser');
+var path = require('path');
+var express = require('express');
 
 var app = require('express')();
 var http = require('http').Server(app);
@@ -99,6 +101,7 @@ app.use((req, res, next) => {
 
 // rutas
 // reescribimos las rutas del user_routes, anteponiendo un /api
+app.use('/', express.static('client/dist', {redirect: false}));
 app.use('/api', user_routes);
 app.use('/api', follow_routes);
 app.use('/api', publication_routes);
@@ -107,6 +110,10 @@ app.use('/api', game_routes);
 app.use('/api', tournament_routes);
 app.use('/api', match_routes);
 app.use('/api', notification_routes);
+
+app.get('*', function(req, res, next){
+  res.sendFile(path.resolve('client/dist/index.html'));
+});
 
 var port = 3800;
 

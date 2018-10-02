@@ -51,6 +51,7 @@ export class DetailComponent implements OnInit{
 
 		if(this.ws){
 			//inicializamos el websocket para el chat
+			console.log("|" + this.env + "|");
 			if(this.env == 'DE'){
 				this.socket = io('http://localhost:3800');
 			}

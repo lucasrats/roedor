@@ -3880,6 +3880,7 @@ var DetailComponent = /** @class */ (function () {
         this.getTournament();
         if (this.ws) {
             //inicializamos el websocket para el chat
+            console.log("|" + this.env + "|");
             if (this.env == 'DE') {
                 this.socket = __WEBPACK_IMPORTED_MODULE_6_socket_io_client__('http://localhost:3800');
             }
