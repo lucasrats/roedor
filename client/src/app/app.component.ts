@@ -32,6 +32,23 @@ export class AppComponent implements OnInit, DoCheck {
   ngOnInit(){
   	this.identity = this._userService.getIdentity();
 
+    var OneSignal = (<any>window).OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+        autoRegister: false,
+        notifyButton: {
+          enable: true,
+        },
+        welcomeNotification: {
+        "title": "My Custom Title",
+        "message": "Thanks for subscribing!",
+        // "url": "" /* Leave commented for the notification to not open a window on Chrome and Firefox (on Safari, it opens to your webpage) */
+      }
+      });
+      OneSignal.registerForPushNotifications(); // shows native browser prompt
+    });
+
     //notificaciones
     this._userService.getNotifications().subscribe(
 			response => {
