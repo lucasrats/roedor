@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var User = require('../models/user');
 var Follow = require('../models/follow');
+var Device = require('../models/device');
 var Publication = require('../models/publication');
 var jwt = require('../services/jwt');
 var moment = require('moment');
@@ -55,7 +56,7 @@ function saveUser(req, res){
 			}
 		});
 
-		
+
 
 	}
 	else{
@@ -91,7 +92,7 @@ function loginUser(req, res){
 						user.password = undefined;
 						return res.status(200).send({user});
 					}
-					
+
 				}else{
 					return res.status(404).send({message: 'El usuario no se ha podido loguear'});
 				}
@@ -123,7 +124,7 @@ function getUser(req, res){
 		followThisUser(req.user.sub, userId).then((value) => {
 			user.password = undefined;
 			return res.status(200).send({
-				user, 
+				user,
 				following: value.following,
 				followed: value.followed
 			});
@@ -364,6 +365,32 @@ function getImageFile(req, res){
 	});
 }
 
+function saveDevice(req, res){
+
+	var params = req.body;
+	var device = new Device();
+	if(params.serial){
+
+		device.serial = params.serial;
+		device.user = req.user.sub;
+
+		device.save((err, deviceStored) => {
+			if(err) return res.status(500).send({message: 'Error al guardar el dispositivo.'});
+
+			if(deviceStored){
+				return res.status(200).send({device: deviceStored});
+			}else{
+				return res.status(404).send({message: 'No se ha podido registrar el dispositivo.'});
+			}
+		});
+	}
+	else{
+		return res.status(200).send({
+			message: 'Falta indicar el dispositivo.'
+		});
+	}
+}
+
 
 module.exports = {
 	saveUser,
@@ -373,5 +400,6 @@ module.exports = {
 	updateUser,
 	uploadImage,
 	getImageFile,
-	getCounters
+	getCounters,
+	saveDevice
 }

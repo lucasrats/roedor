@@ -111,10 +111,18 @@ export class UserService{
 
 	setViewedNotification(id): Observable<any>{
 		let params = JSON.parse('{\"id\": \"' + id + '\"}');
-		
+
 		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
 
 		return this._http.post(this.url + 'set-viewed-notification', params, {headers: headers});
+	}
+
+	registerDevice(serial): Observable<any>{
+		let params = JSON.parse('{\"serial\": \"' + serial + '\"}');
+		//con Nodejs, el backend recibe json
+		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+
+		return this._http.post(this.url + 'register-device', params, {headers: headers});
 	}
 
 }

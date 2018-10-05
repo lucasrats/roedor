@@ -300,9 +300,7 @@ module.exports = "<nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("./node_modules/@angular/core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("./node_modules/@angular/router/esm5/router.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_user_service__ = __webpack_require__("./src/app/services/user.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ng_push__ = __webpack_require__("./node_modules/ng-push/ng-push.umd.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ng_push___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_ng_push__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_global__ = __webpack_require__("./src/app/services/global.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_global__ = __webpack_require__("./src/app/services/global.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -316,33 +314,70 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var AppComponent = /** @class */ (function () {
-    function AppComponent(_route, _router, _userService, _pushNotifications) {
+    function AppComponent(_route, _router, _userService) {
         this._route = _route;
         this._router = _router;
         this._userService = _userService;
-        this._pushNotifications = _pushNotifications;
         this.title = 'ROEDOR.NET';
-        this.url = __WEBPACK_IMPORTED_MODULE_4__services_global__["a" /* GLOBAL */].url;
+        this.url = __WEBPACK_IMPORTED_MODULE_3__services_global__["a" /* GLOBAL */].url;
     }
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.identity = this._userService.getIdentity();
         var OneSignal = window.OneSignal || [];
-        OneSignal.push(function () {
-            OneSignal.init({
+        OneSignal.push(["init", {
                 appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
                 autoRegister: false,
                 notifyButton: {
-                    enable: true,
+                    enable: true /* Set to false to hide */
                 },
                 welcomeNotification: {
-                    "title": "My Custom Title",
-                    "message": "Thanks for subscribing!",
+                    "title": "Notificaciones activadas",
+                    "message": "Gracias por suscribirte!",
+                },
+                promptOptions: {
+                    /* actionMessage limited to 90 characters */
+                    actionMessage: "Queremos informarte de nuevos chats en partidos, retos y avisos.",
+                    /* acceptButtonText limited to 15 characters */
+                    acceptButtonText: "PERMITIR",
+                    /* cancelButtonText limited to 15 characters */
+                    cancelButtonText: "NO GRACIAS"
                 }
+            }]);
+        OneSignal.push(function () {
+            OneSignal.showHttpPrompt();
+        });
+        OneSignal.push(function () {
+            // Occurs when the user's subscription changes to a new value.
+            OneSignal.on('subscriptionChange', function (isSubscribed) {
+                //console.log("The user's subscription state is now:", isSubscribed);
+                //TODO redundante??
+                OneSignal.isPushNotificationsEnabled(function (isEnabled) {
+                    if (isEnabled) {
+                        OneSignal.getUserId().then(function (userId) {
+                            var _this = this;
+                            this._userService.registerDevice(userId).subscribe(function (response) {
+                                if (response.device) {
+                                    _this.status = 'OK';
+                                }
+                                else {
+                                    _this.status = 'error';
+                                }
+                            }, function (error) {
+                                var errorMessage = error;
+                                //console.log(errorMessage);
+                                if (errorMessage != null) {
+                                    _this.status = 'error';
+                                }
+                            });
+                        });
+                    }
+                    else {
+                        console.log("Push notifications no están habilitadas aún.");
+                    }
+                });
             });
-            OneSignal.registerForPushNotifications(); // shows native browser prompt
         });
         //notificaciones
         this._userService.getNotifications().subscribe(function (response) {
@@ -360,7 +395,6 @@ var AppComponent = /** @class */ (function () {
                 _this.status = 'error';
             }
         });
-        this._pushNotifications.requestPermission();
     };
     //ngDoCheck ocurre cada vez que hay un cambio
     AppComponent.prototype.ngDoCheck = function () {
@@ -395,9 +429,6 @@ var AppComponent = /** @class */ (function () {
         this.identity = null;
         this._router.navigate(['/']);
     };
-    AppComponent.prototype.notifPrueba = function () {
-        this._pushNotifications.create('Test', { body: 'something' }).subscribe(function (res) { return console.log(res); }, function (err) { return console.log(err); });
-    };
     AppComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
             selector: 'app-root',
@@ -407,8 +438,7 @@ var AppComponent = /** @class */ (function () {
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */],
             __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */],
-            __WEBPACK_IMPORTED_MODULE_2__services_user_service__["a" /* UserService */],
-            __WEBPACK_IMPORTED_MODULE_3_ng_push__["PushNotificationsService"]])
+            __WEBPACK_IMPORTED_MODULE_2__services_user_service__["a" /* UserService */]])
     ], AppComponent);
     return AppComponent;
 }());
@@ -3421,6 +3451,12 @@ var UserService = /** @class */ (function () {
         var params = JSON.parse('{\"id\": \"' + id + '\"}');
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]().set('Content-Type', 'application/json').set('Authorization', this.getToken());
         return this._http.post(this.url + 'set-viewed-notification', params, { headers: headers });
+    };
+    UserService.prototype.registerDevice = function (serial) {
+        var params = JSON.parse('{\"serial\": \"' + serial + '\"}');
+        //con Nodejs, el backend recibe json
+        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+        return this._http.post(this.url + 'register-device', params, { headers: headers });
     };
     UserService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),

@@ -22,8 +22,7 @@ export class AppComponent implements OnInit, DoCheck {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-  	private _userService: UserService,
-    private _pushNotifications: PushNotificationsService
+  	private _userService: UserService
   ){
   	this.title = 'ROEDOR.NET';
     this.url = GLOBAL.url;
@@ -33,20 +32,61 @@ export class AppComponent implements OnInit, DoCheck {
   	this.identity = this._userService.getIdentity();
 
     var OneSignal = (<any>window).OneSignal || [];
-    OneSignal.push(function() {
-      OneSignal.init({
-        appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
-        autoRegister: false,
-        notifyButton: {
-          enable: true,
-        },
-        welcomeNotification: {
-        "title": "My Custom Title",
-        "message": "Thanks for subscribing!",
+    OneSignal.push(["init", {
+      appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+      autoRegister: false,
+      notifyButton: {
+        enable: true /* Set to false to hide */
+      },
+      welcomeNotification: {
+        "title": "Notificaciones activadas",
+        "message": "Gracias por suscribirte!",
         // "url": "" /* Leave commented for the notification to not open a window on Chrome and Firefox (on Safari, it opens to your webpage) */
+      },
+      promptOptions: {
+        /* actionMessage limited to 90 characters */
+        actionMessage: "Queremos informarte de nuevos chats en partidos, retos y avisos.",
+        /* acceptButtonText limited to 15 characters */
+        acceptButtonText: "PERMITIR",
+        /* cancelButtonText limited to 15 characters */
+        cancelButtonText: "NO GRACIAS"
       }
+    }]);
+    OneSignal.push(function() {
+      OneSignal.showHttpPrompt();
+    });
+    OneSignal.push(function () {
+      // Occurs when the user's subscription changes to a new value.
+      OneSignal.on('subscriptionChange', function (isSubscribed) {
+        //console.log("The user's subscription state is now:", isSubscribed);
+        //TODO redundante??
+        OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+          if(isEnabled){
+            OneSignal.getUserId().then(function (userId) {
+              this._userService.registerDevice(userId).subscribe(
+                response => {
+          				if(response.device){
+          					this.status = 'OK';
+          				}
+          				else{
+          					this.status = 'error';
+          				}
+          			},
+          			error => {
+          				var errorMessage = <any>error;
+          				//console.log(errorMessage);
+          				if(errorMessage != null){
+          					this.status = 'error';
+          				}
+          			}
+          		);
+            });
+          }
+          else{
+            console.log("Push notifications no están habilitadas aún.");    
+          }
+        });
       });
-      OneSignal.registerForPushNotifications(); // shows native browser prompt
     });
 
     //notificaciones
@@ -68,8 +108,6 @@ export class AppComponent implements OnInit, DoCheck {
 				}
 			}
 		);
-
-    this._pushNotifications.requestPermission();
 
   }
 
@@ -115,10 +153,4 @@ export class AppComponent implements OnInit, DoCheck {
     this._router.navigate(['/']);
   }
 
-  notifPrueba(){
-    this._pushNotifications.create('Test', {body: 'something'}).subscribe(
-        res => console.log(res),
-        err => console.log(err)
-    )
-  }
 }

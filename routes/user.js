@@ -14,6 +14,7 @@ var md_upload = multipart({uploadDir: './uploads/users'})
 api.post('/register', UserController.saveUser);
 api.post('/login', UserController.loginUser);
 api.get('/user/:id', md_auth.ensureAuth, UserController.getUser);
+api.post('/register-device', md_auth.ensureAuth, UserController.saveDevice);
 // con la ? indicamos que el parámetro es opcional
 api.get('/users/:page?', md_auth.ensureAuth, UserController.getUsers);
 api.get('/counters/:id?', md_auth.ensureAuth, UserController.getCounters);
