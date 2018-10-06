@@ -330,7 +330,7 @@ var AppComponent = /** @class */ (function () {
                 appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
                 autoRegister: false,
                 notifyButton: {
-                    enable: true /* Set to false to hide */
+                    enable: false /* Set to false to hide */
                 },
                 welcomeNotification: {
                     "title": "Notificaciones activadas",
@@ -353,30 +353,28 @@ var AppComponent = /** @class */ (function () {
             OneSignal.on('subscriptionChange', function (isSubscribed) {
                 //console.log("The user's subscription state is now:", isSubscribed);
                 //TODO redundante??
-                OneSignal.isPushNotificationsEnabled(function (isEnabled) {
-                    if (isEnabled) {
-                        OneSignal.getUserId().then(function (userId) {
-                            var _this = this;
-                            this._userService.registerDevice(userId).subscribe(function (response) {
-                                if (response.device) {
-                                    _this.status = 'OK';
-                                }
-                                else {
-                                    _this.status = 'error';
-                                }
-                            }, function (error) {
-                                var errorMessage = error;
-                                //console.log(errorMessage);
-                                if (errorMessage != null) {
-                                    _this.status = 'error';
-                                }
-                            });
+                if (isSubscribed == true) {
+                    OneSignal.getUserId(function (userId) {
+                        var _this = this;
+                        this._userService.registerDevice(userId).subscribe(function (response) {
+                            if (response.device) {
+                                _this.status = 'OK';
+                            }
+                            else {
+                                _this.status = 'error';
+                            }
+                        }, function (error) {
+                            var errorMessage = error;
+                            //console.log(errorMessage);
+                            if (errorMessage != null) {
+                                _this.status = 'error';
+                            }
                         });
-                    }
-                    else {
-                        console.log("Push notifications no están habilitadas aún.");
-                    }
-                });
+                    });
+                }
+                else {
+                    console.log("Push notifications no están habilitadas aún.");
+                }
             });
         });
         //notificaciones

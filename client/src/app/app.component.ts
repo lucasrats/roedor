@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, DoCheck {
       appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
       autoRegister: false,
       notifyButton: {
-        enable: true /* Set to false to hide */
+        enable: false /* Set to false to hide */
       },
       welcomeNotification: {
         "title": "Notificaciones activadas",
@@ -60,32 +60,30 @@ export class AppComponent implements OnInit, DoCheck {
       OneSignal.on('subscriptionChange', function (isSubscribed) {
         //console.log("The user's subscription state is now:", isSubscribed);
         //TODO redundante??
-        OneSignal.isPushNotificationsEnabled(function(isEnabled) {
-          if(isEnabled){
-            OneSignal.getUserId().then(function (userId) {
-              this._userService.registerDevice(userId).subscribe(
-                response => {
-          				if(response.device){
-          					this.status = 'OK';
-          				}
-          				else{
-          					this.status = 'error';
-          				}
-          			},
-          			error => {
-          				var errorMessage = <any>error;
-          				//console.log(errorMessage);
-          				if(errorMessage != null){
-          					this.status = 'error';
-          				}
-          			}
-          		);
-            });
-          }
-          else{
-            console.log("Push notifications no están habilitadas aún.");    
-          }
-        });
+        if(isSubscribed == true){
+          OneSignal.getUserId(function (userId) {
+            this._userService.registerDevice(userId).subscribe(
+              response => {
+        				if(response.device){
+        					this.status = 'OK';
+        				}
+        				else{
+        					this.status = 'error';
+        				}
+        			},
+        			error => {
+        				var errorMessage = <any>error;
+        				//console.log(errorMessage);
+        				if(errorMessage != null){
+        					this.status = 'error';
+        				}
+        			}
+        		);
+          });
+        }
+        else{
+          console.log("Push notifications no están habilitadas aún.");
+        }
       });
     });
 
