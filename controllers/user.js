@@ -391,6 +391,21 @@ function saveDevice(req, res){
 	}
 }
 
+function getDevices(req, res){
+
+	var id_user = req.user.sub;
+
+	Device.find({user: id_user}, (err, devices) => {
+		if(err) return res.status(500).send({message: 'Error en la petición'});
+
+		if(!devices) return res.status(404).send({message: 'No existen dispositivos para el usuario'});
+
+		return res.status(200).send({devices: devices});
+
+	});
+
+}
+
 
 module.exports = {
 	saveUser,
@@ -401,5 +416,6 @@ module.exports = {
 	uploadImage,
 	getImageFile,
 	getCounters,
-	saveDevice
+	saveDevice,
+	getDevices
 }
