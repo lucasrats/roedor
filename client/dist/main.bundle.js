@@ -2043,7 +2043,7 @@ var TournamentsComponent = /** @class */ (function () {
 /***/ "./src/app/components/user-edit/user-edit.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"col-lg-5\">\r\n\t<h1 class=\"h1-strong\">{{title}}</h1>\r\n\r\n\t<div class=\"alert alert-success\" *ngIf=\"status == 'success'\">\r\n\t\tLos datos se han actualizado correctamente.\r\n\t</div>\r\n\r\n\t<div class=\"alert alert-danger\" *ngIf=\"status == 'error'\">\r\n\t\tNo se ha podido completar la modificación de los datos. Ha ocurrido un error.\r\n\t</div>\r\n\r\n\t<form #userEditForm=\"ngForm\" (ngSubmit)=\"onSubmit()\" class=\"col-lg-12\">\r\n\t\t<p>\r\n\t\t\t<label>Nombre</label>\r\n\t\t\t<input type=\"text\" name=\"name\" #name=\"ngModel\" [(ngModel)]=\"user.name\" class=\"form-control\" required />\r\n\t\t\t<span *ngIf=\"!name.valid && name.touched\">\r\n\t\t\t\tEl nombre es obligatorio\r\n\t\t\t</span>\r\n\t\t</p>\r\n\r\n\t\t<p>\r\n\t\t\t<label>Apellidos</label>\r\n\t\t\t<input type=\"text\" name=\"surname\" #surname=\"ngModel\" [(ngModel)]=\"user.surname\" class=\"form-control\" required />\r\n\t\t\t<span *ngIf=\"!surname.valid && surname.touched\">\r\n\t\t\t\tLos apellidos son obligatorios\r\n\t\t\t</span>\r\n\t\t</p>\r\n\r\n\t\t<p>\r\n\t\t\t<label>Nick</label>\r\n\t\t\t<input type=\"text\" name=\"nick\" #nick=\"ngModel\" [(ngModel)]=\"user.nick\" class=\"form-control\" required />\r\n\t\t\t<span *ngIf=\"!nick.valid && nick.touched\">\r\n\t\t\t\tEl nick es obligatorio\r\n\t\t\t</span>\r\n\t\t</p>\r\n\r\n\t\t<p>\r\n\t\t\t<label>Email</label>\r\n\t\t\t<input type=\"email\" name=\"email\" #email=\"ngModel\" [(ngModel)]=\"user.email\" class=\"form-control\" required pattern=\"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{1,63}$\"/>\r\n\t\t\t<span *ngIf=\"!email.valid && email.touched\">\r\n\t\t\t\tEl email es obligatorio\r\n\t\t\t</span>\r\n\t\t</p>\r\n\r\n\t\t<div *ngIf=\"user.image\">\r\n\t\t\t<img src=\"{{ url + 'get-image-user/' + user.image }}\" />\r\n\t\t</div>\r\n\r\n\t\t<p>\r\n\t\t\t<label>Sube tu avatar</label>\r\n\t\t\t<input type=\"file\" placeholder=\"Subir imagen\" (change)=\"fileChangeEvent($event)\" />\r\n\t\t</p>\r\n\r\n\t\t<input type=\"submit\" value=\"{{title}}\" class=\"btn btn-warning\" [disabled]=\"!userEditForm.form.valid\" />\r\n\r\n\t</form>\r\n</div>"
+module.exports = "<div class=\"row\">\r\n\t<div class=\"col-lg-5\">\r\n\t\t<h1 class=\"h1-strong\">{{title}}</h1>\r\n\r\n\t\t<div class=\"alert alert-success\" *ngIf=\"status == 'success'\">\r\n\t\t\tLos datos se han actualizado correctamente.\r\n\t\t</div>\r\n\r\n\t\t<div class=\"alert alert-danger\" *ngIf=\"status == 'error'\">\r\n\t\t\tNo se ha podido completar la modificación de los datos. Ha ocurrido un error.\r\n\t\t</div>\r\n\r\n\t\t<form #userEditForm=\"ngForm\" (ngSubmit)=\"onSubmit()\" class=\"col-lg-12\">\r\n\t\t\t<p>\r\n\t\t\t\t<label>Nombre</label>\r\n\t\t\t\t<input type=\"text\" name=\"name\" #name=\"ngModel\" [(ngModel)]=\"user.name\" class=\"form-control\" required />\r\n\t\t\t\t<span *ngIf=\"!name.valid && name.touched\">\r\n\t\t\t\t\tEl nombre es obligatorio\r\n\t\t\t\t</span>\r\n\t\t\t</p>\r\n\r\n\t\t\t<p>\r\n\t\t\t\t<label>Apellidos</label>\r\n\t\t\t\t<input type=\"text\" name=\"surname\" #surname=\"ngModel\" [(ngModel)]=\"user.surname\" class=\"form-control\" required />\r\n\t\t\t\t<span *ngIf=\"!surname.valid && surname.touched\">\r\n\t\t\t\t\tLos apellidos son obligatorios\r\n\t\t\t\t</span>\r\n\t\t\t</p>\r\n\r\n\t\t\t<p>\r\n\t\t\t\t<label>Nick</label>\r\n\t\t\t\t<input type=\"text\" name=\"nick\" #nick=\"ngModel\" [(ngModel)]=\"user.nick\" class=\"form-control\" required />\r\n\t\t\t\t<span *ngIf=\"!nick.valid && nick.touched\">\r\n\t\t\t\t\tEl nick es obligatorio\r\n\t\t\t\t</span>\r\n\t\t\t</p>\r\n\r\n\t\t\t<p>\r\n\t\t\t\t<label>Email</label>\r\n\t\t\t\t<input type=\"email\" name=\"email\" #email=\"ngModel\" [(ngModel)]=\"user.email\" class=\"form-control\" required pattern=\"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{1,63}$\"/>\r\n\t\t\t\t<span *ngIf=\"!email.valid && email.touched\">\r\n\t\t\t\t\tEl email es obligatorio\r\n\t\t\t\t</span>\r\n\t\t\t</p>\r\n\r\n\t\t\t<div *ngIf=\"user.image\">\r\n\t\t\t\t<img src=\"{{ url + 'get-image-user/' + user.image }}\" />\r\n\t\t\t</div>\r\n\r\n\t\t\t<p>\r\n\t\t\t\t<label>Sube tu avatar</label>\r\n\t\t\t\t<input type=\"file\" placeholder=\"Subir imagen\" (change)=\"fileChangeEvent($event)\" />\r\n\t\t\t</p>\r\n\r\n\t\t\t<input type=\"submit\" value=\"{{title}}\" class=\"btn btn-warning\" [disabled]=\"!userEditForm.form.valid\" />\r\n\r\n\t\t</form>\r\n\t</div>\r\n\r\n\t<div class=\"col-lg-5\">\r\n\t\t<h1 class=\"h1-strong\">Dispositivos notificaciones</h1>\r\n\t\t<ul class=\"list-group\">\r\n\t\t\t<li class=\"list-group-item\"><button type=\"button\" class=\"btn btn-info\" (click)=\"clickSubscribe()\">Suscribete</button></li>\r\n\t\t  <li class=\"list-group-item\" *ngFor=\"let device of devices\">{{device.serial}}</li>\r\n\t\t</ul>\r\n\t</div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -2084,8 +2084,16 @@ var UserEditComponent = /** @class */ (function () {
         this.url = __WEBPACK_IMPORTED_MODULE_4__services_global__["a" /* GLOBAL */].url;
     }
     UserEditComponent.prototype.ngOnInit = function () {
-        console.log(this.user);
-        console.log('user-edit.component se ha cargado!!');
+        //console.log(this.user);
+        //console.log('user-edit.component se ha cargado!!');
+        this.getDevicesUser();
+        this.OneSignal = this.OneSignal || [];
+    };
+    UserEditComponent.prototype.clickSubscribe = function () {
+        this.OneSignal.push(function () {
+            console.log("Mostramos prompt");
+            this.OneSignal.registerForPushNotifications(); // shows native browser prompt
+        });
     };
     UserEditComponent.prototype.onSubmit = function () {
         var _this = this;
@@ -2100,7 +2108,7 @@ var UserEditComponent = /** @class */ (function () {
                 _this.identity = response.user;
                 // subida imagen usuario
                 _this._uploadService.makeFileRequest(_this.url + 'upload-image-user/' + _this.user._id, [], _this.filesToUpload, _this.token, 'image').then(function (result) {
-                    console.log(result);
+                    //console.log(result);
                     _this.user.image = result.user.image;
                     localStorage.setItem('identity', JSON.stringify(_this.user));
                 });
@@ -2116,6 +2124,22 @@ var UserEditComponent = /** @class */ (function () {
     UserEditComponent.prototype.fileChangeEvent = function (fileInput) {
         this.filesToUpload = fileInput.target.files;
         console.log(this.filesToUpload);
+    };
+    UserEditComponent.prototype.getDevicesUser = function () {
+        var _this = this;
+        this._userService.getDevices().subscribe(function (response) {
+            if (!response.devices) {
+                _this.status = 'error';
+            }
+            else {
+                _this.devices = response.devices;
+            }
+        }, function (error) {
+            var errorMessage = error;
+            if (errorMessage != null) {
+                _this.status = 'error';
+            }
+        });
     };
     UserEditComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -3455,6 +3479,10 @@ var UserService = /** @class */ (function () {
         //con Nodejs, el backend recibe json
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]().set('Content-Type', 'application/json').set('Authorization', this.getToken());
         return this._http.post(this.url + 'register-device', params, { headers: headers });
+    };
+    UserService.prototype.getDevices = function () {
+        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+        return this._http.get(this.url + 'user-devices', { headers: headers });
     };
     UserService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),

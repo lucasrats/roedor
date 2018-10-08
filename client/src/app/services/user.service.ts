@@ -125,4 +125,10 @@ export class UserService{
 		return this._http.post(this.url + 'register-device', params, {headers: headers});
 	}
 
+	getDevices(): Observable<any>{
+		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+
+		return this._http.get(this.url + 'user-devices', {headers: headers});
+	}
+
 }
