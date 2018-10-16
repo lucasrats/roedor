@@ -65,7 +65,7 @@ export class AppComponent implements OnInit, DoCheck {
           //console.log("The user's subscription state is now:", isSubscribed);
           //TODO redundante??
           if(isSubscribed == true){
-            OneSignal.getUserId(function (userId) {
+            OneSignal.getUserId((userId) => {
               console.log("Logged 4 - deviceId - " + userId);
               this._userService.registerDevice(userId).subscribe(
                 response => {
