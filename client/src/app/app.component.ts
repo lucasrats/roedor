@@ -58,9 +58,9 @@ export class AppComponent implements OnInit, DoCheck {
         console.log("Logged 2 - prompthttp");
         OneSignal.showHttpPrompt();
       });
-      OneSignal.push(function () {
+      OneSignal.push(() => {
         // Occurs when the user's subscription changes to a new value.
-        OneSignal.on('subscriptionChange', function (isSubscribed) {
+        OneSignal.on('subscriptionChange', (isSubscribed) => {
           console.log("Logged 3 - suscrito? " + isSubscribed);
           //console.log("The user's subscription state is now:", isSubscribed);
           //TODO redundante??
@@ -79,10 +79,12 @@ export class AppComponent implements OnInit, DoCheck {
           				}
           			},
           			error => {
+                  console.log("Logged 6 - error");
           				var errorMessage = <any>error;
           				//console.log(errorMessage);
           				if(errorMessage != null){
           					this.status = 'error';
+                    console.log("Logged 7 - " + this.status);
           				}
           			}
           		);
