@@ -5,6 +5,7 @@ var Match = require('../models/match');
 var User = require('../models/user');
 var Tournament = require('../models/tournament');
 var Participant = require('../models/participant');
+var Device = require('../models/device');
 var moment = require('moment');
 
 function getMatches(req, res){
@@ -73,7 +74,56 @@ function addChatMatch(req, res){
 
 			if(!matchtUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el chat'});
 
-			//return res.status(200).send({chat: actualChat});
+			let urlMatch = 'https://roedor.net/tournament/' + match.tournament + '/match/' + matchId;
+			//comprobamos a qué devices tenemos que enviarle la notificación push
+			var message = {
+			  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+			  contents: {"en": "Nuevo chat en partido"},
+			  include_player_ids: [],
+				url: urlMatch
+			};
+			//TODO arreglar con async-await
+			if(req.user.sub == match.home){
+				console.log("away");
+				Device.find({"user": match.away}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+				});
+			}
+			else if(req.user.sub == match.away){
+				console.log("home");
+				Device.find({"user": match.home}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+				});
+			}
+			else{
+				console.log("system");
+				Device.find({ $or:[{"user": match.home}, {"user": match.away}]}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+				});
+			}
+
+			//enviamos notificación push al adversario
+			//sendNotification(message);
 			return res.status(200).send({chat: {user: user, text: update.chat}});
 		});
 	});
@@ -326,6 +376,36 @@ function classesBan(req, res){
 
 		});
 
+}
+
+function sendNotification(data){
+  var headers = {
+    "Content-Type": "application/json; charset=utf-8"
+  };
+
+  var options = {
+    host: "onesignal.com",
+    port: 443,
+    path: "/api/v1/notifications",
+    method: "POST",
+    headers: headers
+  };
+
+  var https = require('https');
+  var req = https.request(options, function(res) {
+    res.on('data', function(data) {
+      console.log("Response:");
+      console.log(JSON.parse(data));
+    });
+  });
+
+  req.on('error', function(e) {
+    console.log("ERROR:");
+    console.log(e);
+  });
+
+  req.write(JSON.stringify(data));
+  req.end();
 }
 
 module.exports = {
