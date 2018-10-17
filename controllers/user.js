@@ -10,6 +10,7 @@ var Device = require('../models/device');
 var Publication = require('../models/publication');
 var jwt = require('../services/jwt');
 var moment = require('moment');
+var nodemailer = require('nodemailer');
 
 function saveUser(req, res){
 	//recogemos los datos que nos llegan por post
@@ -23,7 +24,7 @@ function saveUser(req, res){
 		user.image = null;
 		user.created_at = moment().format();
 		user.active = false;
-		user.token = 'tokenprueba';
+		user.token = moment().unix();
 
 		//comprobamos que no haya duplicados
 		User.find({
@@ -47,6 +48,41 @@ function saveUser(req, res){
 
 						// si tenemos userStored, es que se ha realizado bien
 						if(userStored){
+
+							//enviamos email con el token
+					    let transporter = nodemailer.createTransport({
+					        host: 'smtp.zoho.com',
+					        port: 465,
+					        secure: true, // true for 465, false for other ports
+					        auth: {
+					            user: 'info@roedor.net', // generated ethereal user
+					            pass: 'zeusz4byc88_' // generated ethereal password
+					        }
+					    });
+
+					    // setup email data with unicode symbols
+							let urlActivate = 'https://roedor.net/user-activate?email=' + userStored.email + '&token=' + userStored.token;
+					    let mailOptions = {
+					        from: '"Roedor.net" <info@roedor.net>', // sender address
+					        to: userStored.email, // list of receivers
+					        subject: 'Confirma tu cuenta de Roedor.net', // Subject line
+					        text: 'Por favor, para confirmar tu cuenta, pincha en el siguiente enlace, o copia la url en el navegador.', // plain text body
+					        html: 'Por favor, para confirmar tu cuenta, pincha en el siguiente enlace, o copia la url en el navegador.<br /><a href="' + urlActivate + '">' + urlActivate + '</a>' // html body
+					    };
+
+					    // send mail with defined transport object
+					    transporter.sendMail(mailOptions, (error, info) => {
+					        if (error) {
+					            return console.log(error);
+					        }
+					        console.log('Message sent: %s', info.messageId);
+					        // Preview only available when sending through an Ethereal account
+					        //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+					        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+					        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+					    });
+
 							res.status(200).send({user: userStored});
 						}else{
 							res.status(404).send({message: 'No se ha registrado el usuario'});
@@ -73,9 +109,7 @@ function loginUser(req, res){
 	var email = params.email;
 	var password = params.password;
 
-	User.findOne({
-		email: email
-	}, (err, user) => {
+	User.findOne({email: email, active: true}, (err, user) => {
 		if(err) return res.status(500).send({message: 'Error en la petición'});
 
 		if(user){
@@ -98,7 +132,7 @@ function loginUser(req, res){
 				}
 			});
 		}else{
-			return res.status(404).send({message: 'El usuario no se ha podido loguear!!'});
+			return res.status(404).send({message: 'El usuario no se ha podido loguear o no está activo. Por favor, revísalo.'});
 		}
 	});
 }
@@ -406,6 +440,22 @@ function getDevices(req, res){
 
 }
 
+function activateUserRegistration(req, res){
+
+	var params = req.body;
+
+	User.findOneAndUpdate({email: params.email, token: params.token, active: false}, {active: true}, {new: true}, (err, userUpdated) =>{
+		if(err) return res.status(500).send({message: 'Error en la petición'});
+
+		if(!userUpdated) return res.status(404).send({message: 'No se ha podido actualizar ese usuario'});
+
+		//TODO enviar un email con bienvenida e instrucciones iniciales
+
+		return res.status(200).send({user: userUpdated});
+	});
+
+}
+
 
 module.exports = {
 	saveUser,
@@ -417,5 +467,6 @@ module.exports = {
 	getImageFile,
 	getCounters,
 	saveDevice,
-	getDevices
+	getDevices,
+	activateUserRegistration
 }

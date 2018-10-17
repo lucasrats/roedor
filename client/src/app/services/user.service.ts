@@ -131,4 +131,10 @@ export class UserService{
 		return this._http.get(this.url + 'user-devices', {headers: headers});
 	}
 
+	activateUserRegistration(email, token): Observable<any>{
+		let params = JSON.parse('{\"email\": \"' + email + '\", \"token\": \"' + token + '\"}');
+
+		return this._http.post(this.url + 'user-activate', params);
+	}
+
 }

@@ -52,6 +52,7 @@ function addChatMatch(req, res){
 
 	var matchId = req.params.id;
 	var update = req.body;
+	var dateWrote = moment().unix();
 
 	Match.findById(matchId, (err, match) => {
 		if(err) return res.status(500).send({message: err});
@@ -60,11 +61,11 @@ function addChatMatch(req, res){
 
 		let user = update.system ? 'Sistema' : req.user.nick;
 		if(!match.chat){
-			var chatToStore = JSON.stringify([{user: user, text: update.chat}]);
+			var chatToStore = JSON.stringify([{user: user, text: update.chat, date: dateWrote}]);
 		}
 		else{
 			var actualChat = JSON.parse(match.chat);
-			actualChat.push({user: user, text: update.chat});
+			actualChat.push({user: user, text: update.chat, date: dateWrote});
 			var chatToStore = JSON.stringify(actualChat);
 		}
 
@@ -84,7 +85,6 @@ function addChatMatch(req, res){
 			};
 			//TODO arreglar con async-await
 			if(req.user.sub == match.home){
-				console.log("away");
 				Device.find({"user": match.away}).exec((err, devices) => {
 					if(err) return res.status(500).send({message: err});
 
@@ -97,7 +97,6 @@ function addChatMatch(req, res){
 				});
 			}
 			else if(req.user.sub == match.away){
-				console.log("home");
 				Device.find({"user": match.home}).exec((err, devices) => {
 					if(err) return res.status(500).send({message: err});
 
@@ -110,7 +109,6 @@ function addChatMatch(req, res){
 				});
 			}
 			else{
-				console.log("system");
 				Device.find({ $or:[{"user": match.home}, {"user": match.away}]}).exec((err, devices) => {
 					if(err) return res.status(500).send({message: err});
 
@@ -124,7 +122,7 @@ function addChatMatch(req, res){
 
 			//enviamos notificación push al adversario
 			//sendNotification(message);
-			return res.status(200).send({chat: {user: user, text: update.chat}});
+			return res.status(200).send({chat: {user: user, text: update.chat, date: dateWrote}});
 		});
 	});
 }
@@ -394,8 +392,9 @@ function sendNotification(data){
   var https = require('https');
   var req = https.request(options, function(res) {
     res.on('data', function(data) {
-      console.log("Response:");
+      /*console.log("Response:");
       console.log(JSON.parse(data));
+			*/
     });
   });
 

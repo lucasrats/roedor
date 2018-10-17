@@ -1,0 +1,28 @@
+<div class="row">
+	<div class="col-lg-5">
+		<h1 class="h1-strong">{{title}}</h1>
+
+		<div class="alert alert-success" *ngIf="status == 'success'">
+			El usuario se ha confirmado correctamente. Ya puedes acceder a la web desde <a href="https://roedor.net/login">aquí</a>.
+		</div>
+
+		<div class="alert alert-danger" *ngIf="status == 'error'">
+			No se ha podido completar la confirmación del registro. Por favor, reintenta o ponte en contacto con info@roedor.net
+		</div>
+
+		<form #userActivateForm="ngForm" (ngSubmit)="onSubmit()" class="col-lg-12">
+      <p>
+				<label>Email</label>
+				<input type="email" name="email" class="form-control" required pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" value="{{email}}"/>
+			</p>
+
+			<p>
+				<label>Código/Token</label>
+				<input type="text" name="token" class="form-control" required value="{{token}}"/>
+			</p>
+
+			<input type="submit" value="Confirmar" class="btn btn-success" [disabled]="!userActivateForm.form.valid" />
+
+		</form>
+	</div>
+</div>

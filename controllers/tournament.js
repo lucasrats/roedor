@@ -6,6 +6,7 @@ var Tournament = require('../models/tournament');
 var User = require('../models/user');
 var Participant = require('../models/participant');
 var Match = require('../models/match');
+var Device = require('../models/device');
 var moment = require('moment');
 
 function saveTournament(req, res){
@@ -526,6 +527,29 @@ function nextRoundSwiss(req, res){
 					if(err) return res.status(500).send({message: err});
 
 					if(!matchStored) res.status(404).send({message: 'Ha ocurrido un error al registrar el partido.'});
+
+					//notificación push al usuario del partido
+					let urlMatch = 'https://roedor.net/tournament/' + matchStored.tournament + '/match/' + matchStored._id;
+					var message = {
+					  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+					  contents: {"en": "Tienes un nuevo partido de liga"},
+					  include_player_ids: [],
+						url: urlMatch
+					};
+
+					Device.find({user: matchStored.home}).exec((err, devices) => {
+						console.log("nextRoundSwissBYE");
+						console.log(devices);
+						if(err) return res.status(500).send({message: err});
+
+						if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+						devices.forEach(device => {
+							message.include_player_ids.push(device.serial);
+						});
+						sendNotification(message);
+					});
+
 				});
 			}
 
@@ -563,6 +587,28 @@ function nextRoundSwiss(req, res){
 					if(err) return res.status(500).send({message: err});
 
 					if(!matchStored) res.status(404).send({message: 'Ha ocurrido un error al registrar el partido.'});
+
+					//notificación push al usuario del partido
+					let urlMatch = 'https://roedor.net/tournament/' + matchStored.tournament + '/match/' + matchStored._id;
+					var message = {
+					  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+					  contents: {"en": "Tienes un nuevo partido de liga"},
+					  include_player_ids: [],
+						url: urlMatch
+					};
+
+					Device.find({user: {$in: [matchStored.home, matchStored.away]}}).exec((err, devices) => {
+						console.log("nextRoundSwiss");
+						console.log(devices);
+						if(err) return res.status(500).send({message: err});
+
+						if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+						devices.forEach(device => {
+							message.include_player_ids.push(device.serial);
+						});
+						sendNotification(message);
+					});
 				});
 
 				j += 2;
@@ -801,6 +847,37 @@ function addCardsPool(req, res){
 
 	});
 
+}
+
+function sendNotification(data){
+  var headers = {
+    "Content-Type": "application/json; charset=utf-8"
+  };
+
+  var options = {
+    host: "onesignal.com",
+    port: 443,
+    path: "/api/v1/notifications",
+    method: "POST",
+    headers: headers
+  };
+
+  var https = require('https');
+  var req = https.request(options, function(res) {
+    res.on('data', function(data) {
+      /*console.log("Response:");
+      console.log(JSON.parse(data));
+			*/
+    });
+  });
+
+  req.on('error', function(e) {
+    console.log("ERROR:");
+    console.log(e);
+  });
+
+  req.write(JSON.stringify(data));
+  req.end();
 }
 
 module.exports = {
