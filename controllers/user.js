@@ -456,6 +456,35 @@ function activateUserRegistration(req, res){
 
 }
 
+function removeDevice(req, res){
+
+	var params = req.body;
+	var device = new Device();
+	if(params.serial){
+
+		Device.findOne({serial: params.serial, user: req.user.sub}, (err, device) => {
+			if(err) return res.status(500).send({message: 'Error en la petición'});
+
+			if(!device) return res.status(404).send({message: 'No existen dispositivos para el usuario'});
+
+			device.remove((err, deviceRemoved) => {
+				if(err) return res.status(500).send({message: 'Se ha producido un error'});
+
+				if(!deviceRemoved) return res.status(404).send({message: 'No se ha podido borrar el dispositivo'});
+
+				return res.status(200).send({device: deviceRemoved});
+			});
+
+		});
+
+	}
+	else{
+		return res.status(200).send({
+			message: 'Falta indicar el dispositivo.'
+		});
+	}
+}
+
 
 module.exports = {
 	saveUser,
@@ -468,5 +497,6 @@ module.exports = {
 	getCounters,
 	saveDevice,
 	getDevices,
-	activateUserRegistration
+	activateUserRegistration,
+	removeDevice
 }

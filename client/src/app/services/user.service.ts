@@ -137,4 +137,11 @@ export class UserService{
 		return this._http.post(this.url + 'user-activate', params);
 	}
 
+	removeDeviceUser(serial): Observable<any>{
+		let params = JSON.parse('{\"serial\": \"' + serial + '\"}');
+		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', this.getToken());
+
+		return this._http.post(this.url + 'user-device', params, {headers: headers});
+	}
+
 }

@@ -92,7 +92,29 @@ export class AppComponent implements OnInit, DoCheck {
             });
           }
           else{
-            console.log("Push notifications no están habilitadas aún.");
+            OneSignal.getUserId((userId) => {
+              console.log("Logged 4 - deviceId - " + userId);
+              this._userService.removeDeviceUser(userId).subscribe(
+                response => {
+                  console.log("Logged 5.f");
+          				if(response.device){
+          					this.status = 'OK';
+          				}
+          				else{
+          					this.status = 'error';
+          				}
+          			},
+          			error => {
+                  console.log("Logged 6.f - error");
+          				var errorMessage = <any>error;
+          				//console.log(errorMessage);
+          				if(errorMessage != null){
+          					this.status = 'error';
+                    console.log("Logged 7 - " + this.status);
+          				}
+          			}
+          		);
+            });
           }
         });
       });

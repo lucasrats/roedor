@@ -43,18 +43,7 @@ export class UserEditComponent implements OnInit{
 
 		var OneSignal = (<any>window).OneSignal || [];
 		var buttonSelector = "#suscribeButton";
-/*
-		OneSignal.push(["getNotificationPermission", function(permission) {
-	    console.log("Site Notification Permission:", permission);
-			if(permission == 'granted'){
-				this.isSubscribed = true;
-			}
-			else{
-				this.isSubscribed = false;
-			}
-	    // (Output) Site Notification Permission: default
-		}]);
-*/
+
 		OneSignal.push(() => {
         // If we're on an unsupported browser, do nothing
         if (!OneSignal.isPushNotificationsSupported()) {
@@ -87,8 +76,8 @@ export class UserEditComponent implements OnInit{
 
 		function updateMangeWebPushSubscriptionButton(buttonSelector) {
 	      var hideWhenSubscribed = false;
-	      var subscribeText = "Subscribe to Notifications";
-	      var unsubscribeText = "Unsubscribe from Notifications";
+	      var subscribeText = "Recibir notificaciones en este dispositivo";
+	      var unsubscribeText = "Dejar de recibir notificaciones en este dispositivo";
 
 	      getSubscriptionState().then(function(state) {
 	          var buttonText = !state.isPushEnabled || state.isOptedOut ? subscribeText : unsubscribeText;
@@ -127,12 +116,7 @@ export class UserEditComponent implements OnInit{
 	  }
 	}
 
-
-
-
-
-
-
+/*
 	clickSubscribe(){
 		var OneSignal = (<any>window).OneSignal || [];
 		OneSignal.push(function() {
@@ -140,7 +124,7 @@ export class UserEditComponent implements OnInit{
 			OneSignal.registerForPushNotifications(); // shows native browser prompt
     });
 	}
-
+*/
 	onSubmit(){
 		//console.log(this.user);
 		this._userService.updateUser(this.user).subscribe(

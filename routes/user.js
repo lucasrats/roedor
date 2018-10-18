@@ -24,5 +24,6 @@ api.post('/upload-image-user/:id', [md_auth.ensureAuth, md_upload], UserControll
 api.get('/get-image-user/:imageFile', UserController.getImageFile);
 api.get('/user-devices', md_auth.ensureAuth, UserController.getDevices);
 api.post('/user-activate', UserController.activateUserRegistration);
+api.post('/user-device', md_auth.ensureAuth, UserController.removeDevice);
 
 module.exports = api;
