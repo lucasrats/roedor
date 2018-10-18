@@ -207,6 +207,7 @@ function addChatTournament(req, res){
 
 	var tournamentId = req.params.id;
 	var update = req.body;
+	var dateWrote = moment().unix();
 
 	Tournament.findById(tournamentId, (err, tournament) => {
 		if(err) return res.status(500).send({message: err});
@@ -214,11 +215,11 @@ function addChatTournament(req, res){
 		if(!tournament) return res.status(404).send({message: 'No existe ese torneo'});
 
 		if(!tournament.chat){
-			var chatToStore = JSON.stringify([{user: req.user.nick ,text: update.chat}]);
+			var chatToStore = JSON.stringify([{user: req.user.nick ,text: update.chat, date: dateWrote}]);
 		}
 		else{
 			var actualChat = JSON.parse(tournament.chat);
-			actualChat.push({user: req.user.nick ,text: update.chat});
+			actualChat.push({user: req.user.nick ,text: update.chat, date: dateWrote});
 			var chatToStore = JSON.stringify(actualChat);
 		}
 
@@ -228,7 +229,7 @@ function addChatTournament(req, res){
 
 			if(!tournamentUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el chat'});
 
-			return res.status(200).send({chat: {user: req.user.nick ,text: update.chat}});
+			return res.status(200).send({chat: {user: req.user.nick ,text: update.chat, date: dateWrote}});
 		});
 	});
 }
@@ -538,8 +539,6 @@ function nextRoundSwiss(req, res){
 					};
 
 					Device.find({user: matchStored.home}).exec((err, devices) => {
-						console.log("nextRoundSwissBYE");
-						console.log(devices);
 						if(err) return res.status(500).send({message: err});
 
 						if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});

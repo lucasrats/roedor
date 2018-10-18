@@ -7,7 +7,7 @@
   			<button class="btn btn-success" *ngIf="!participant" (click)="joinTournament()">
   				Unirse
   			</button>
-  			<button class="btn btn-success" *ngIf="participant" (click)="unjoinTournament()">
+  			<button class="btn btn-danger" *ngIf="participant" (click)="unjoinTournament()">
   				Desapuntarse
   			</button>
   			<button class="btn btn-success" *ngIf="participant && checkin" (click)="unjoinTournament()">

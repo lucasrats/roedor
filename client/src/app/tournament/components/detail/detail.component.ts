@@ -77,7 +77,12 @@ export class DetailComponent implements OnInit{
 			response => {
 				if(response.tournament){
 				      this.tournament = response.tournament;
-							this.chatHistory = JSON.parse(this.tournament.chat);
+							if(this.tournament.chat){
+								this.chatHistory = JSON.parse(this.tournament.chat);
+							}
+							else{
+								this.chatHistory = [{user: "Roedor.net", text: "Bienvenido al chat del torneo. No te cortes y habla con el resto de gente.", date: this.tournament.start_date}];
+							}
 				}
 				else{
 				      this.status = 'error';

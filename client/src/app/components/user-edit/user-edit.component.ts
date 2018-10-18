@@ -20,7 +20,6 @@ export class UserEditComponent implements OnInit{
 	public status: string;
 	public url: string;
 	public devices: Device[];
-	public OneSignal;
 
 	public filesToUpload: Array<File>;
 
@@ -38,17 +37,16 @@ export class UserEditComponent implements OnInit{
 	}
 
 	ngOnInit(){
-		//console.log(this.user);
 		//console.log('user-edit.component se ha cargado!!');
 		this.getDevicesUser();
-		this.OneSignal = this.OneSignal || [];
 
 	}
 
 	clickSubscribe(){
-		this.OneSignal.push(function() {
+		var OneSignal = (<any>window).OneSignal || [];
+		OneSignal.push(function() {
 			console.log("Mostramos prompt");
-			this.OneSignal.registerForPushNotifications(); // shows native browser prompt
+			OneSignal.registerForPushNotifications(); // shows native browser prompt
     });
 	}
 

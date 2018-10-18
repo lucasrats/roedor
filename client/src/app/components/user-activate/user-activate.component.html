@@ -13,12 +13,12 @@
 		<form #userActivateForm="ngForm" (ngSubmit)="onSubmit()" class="col-lg-12">
       <p>
 				<label>Email</label>
-				<input type="email" name="email" class="form-control" required pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" value="{{email}}"/>
+				<input type="email" name="email" [(ngModel)]="email" class="form-control" required pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" />
 			</p>
 
 			<p>
 				<label>Código/Token</label>
-				<input type="text" name="token" class="form-control" required value="{{token}}"/>
+				<input type="text" name="token" [(ngModel)]="token" class="form-control" required />
 			</p>
 
 			<input type="submit" value="Confirmar" class="btn btn-success" [disabled]="!userActivateForm.form.valid" />
