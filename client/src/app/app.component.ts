@@ -36,6 +36,7 @@ export class AppComponent implements OnInit, DoCheck {
       var OneSignal = (<any>window).OneSignal || [];
       OneSignal.push(["init", {
         appId: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+        persistNotification: false,
         autoRegister: false,
         notifyButton: {
           enable: false /* Set to false to hide */

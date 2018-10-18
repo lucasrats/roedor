@@ -60,7 +60,9 @@
 	<div class="col-lg-5">
 		<h1 class="h1-strong">Dispositivos notificaciones</h1>
 		<ul class="list-group">
-			<li class="list-group-item"><button type="button" class="btn btn-info" (click)="clickSubscribe()">Suscribete</button></li>
+			<li class="list-group-item">
+				<button type="button" id="suscribeButton" class="btn btn-info" (click)="clickSubscribe()">Recibir notificaciones</button>
+			</li>
 		  <li class="list-group-item" *ngFor="let device of devices">{{device.serial}}</li>
 		</ul>
 	</div>
