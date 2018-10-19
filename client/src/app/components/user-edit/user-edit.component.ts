@@ -67,8 +67,7 @@ export class UserEditComponent implements OnInit{
 	                  OneSignal.setSubscription(true);
 	              } else {
 	                  /* Unsubscribed, subscribe them */
-	                  //OneSignal.registerForPushNotifications();
-										OneSignal.showHttpPrompt();
+	                  OneSignal.registerForPushNotifications();
 	              }
 	          }
 	      });
