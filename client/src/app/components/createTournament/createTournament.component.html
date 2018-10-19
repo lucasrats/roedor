@@ -69,7 +69,7 @@
       </div>
 			<div class="form-group col-md-2">
         <label for="draft">Draft (nº de sobres)</label>
-        <input type="text" class="form-control" id="draft" name="draft" #draft="ngModel" [(ngModel)]="tournament.draft" required pattern="^[0-9]$">
+        <input type="number" class="form-control" id="draft" name="draft" #draft="ngModel" [(ngModel)]="tournament.draft" required>
       </div>
 			<div class="form-group col-md-4">
         <label for="decks">¿Envío de mazos por jugador?</label>

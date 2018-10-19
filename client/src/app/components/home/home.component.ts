@@ -17,12 +17,12 @@ export class HomeComponent implements OnInit{
 	}
 
 	ngOnInit(){
-		console.log('home.component cargado OK');
+		//console.log('home.component cargado OK');
 		if(this.env == 'DE'){
 			const socket = io('http://localhost:3800');
 		}
 		else{
-			const socket = io('https://roedor.net', {transports: ['websocket']});
+			const socket = io('https://roedor.net');
 		}
 	}
 }
