@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit{
 			const socket = io('http://localhost:3800');
 		}
 		else{
-			const socket = io('https://roedor.net');
+			const socket = io('wss://roedor.net', {transports: ['websocket']});
 		}
 	}
 }

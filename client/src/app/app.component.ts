@@ -55,10 +55,12 @@ export class AppComponent implements OnInit, DoCheck {
           cancelButtonText: "NO GRACIAS"
         }
       }]);
+      /*
       OneSignal.push(function() {
         console.log("Logged 2 - prompthttp");
         OneSignal.showHttpPrompt();
       });
+      */
       OneSignal.push(() => {
         // Occurs when the user's subscription changes to a new value.
         OneSignal.on('subscriptionChange', (isSubscribed) => {
