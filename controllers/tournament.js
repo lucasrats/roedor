@@ -351,6 +351,9 @@ function startTournament(req, res){
 
 								if(!matchStored) res.status(404).send({message: 'Ha ocurrido un error al registrar el partido.'});
 
+								//insertamos el usuario en el campo byes del torneo, para que no disfrute de otro en futuras rondas
+								tournament.byes = participants[0].user;
+								
 								//notificación push al usuario del partido
 								let urlTournament = 'https://roedor.net/tournament/' + matchStored.tournament;
 								var message = {
@@ -375,8 +378,6 @@ function startTournament(req, res){
 
 						tournament.active = true;
 						tournament.week = 1;
-						//insertamos el usuario en el campo byes del torneo, para que no disfrute de otro en futuras rondas
-						tournament.byes = participants[0].user;
 						tournament.save();
 
 						return res.status(200).send({message: 'Se han generado los partidos de la ronda 1. El torneo ha comenzado.'});
@@ -495,6 +496,8 @@ function startTournament(req, res){
 								j++;
 							}
 						}
+						tournament.active = true;
+						tournament.save();
 					}
 					//else type=KO
 				});

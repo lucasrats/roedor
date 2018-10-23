@@ -223,6 +223,26 @@ function confirmMatch(req, res){
 			}
 			else{
 				toUpdate = {homeAccept: true};
+				//avisamos al contrincante de que se ha hecho checkin
+				let urlMatch = 'https://roedor.net/tournament/' + match.tournament + '/match/' + matchId;
+				//comprobamos a qué devices tenemos que enviarle la notificación push
+				var message = {
+				  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+				  contents: {"en": "Un partido está pendiente de tu checkin"},
+				  include_player_ids: [],
+					url: urlMatch
+				};
+				//TODO arreglar con async-await
+				Device.find({"user": match.away}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+				});
 			}
 
 			Match.findOneAndUpdate({_id: matchId}, toUpdate, { new:true }).populate('home away').exec((err, matchtUpdated) => {
@@ -239,6 +259,26 @@ function confirmMatch(req, res){
 			}
 			else{
 				toUpdate = {awayAccept: true};
+				//avisamos al contrincante de que se ha hecho checkin
+				let urlMatch = 'https://roedor.net/tournament/' + match.tournament + '/match/' + matchId;
+				//comprobamos a qué devices tenemos que enviarle la notificación push
+				var message = {
+				  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+				  contents: {"en": "Un partido está pendiente de tu checkin"},
+				  include_player_ids: [],
+					url: urlMatch
+				};
+				//TODO arreglar con async-await
+				Device.find({"user": match.home}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+				});
 			}
 
 			Match.findOneAndUpdate({_id: matchId}, toUpdate, { new:true }).populate('home away').exec((err, matchtUpdated) => {
@@ -284,23 +324,70 @@ function classesSelect(req, res){
 
 			//var arr_classesHS = ['checkSelBrujo','checkSelCazador','checkSelChaman','checkSelDruida','checkSelGuerrero','checkSelMago','checkSelPaladin','checkSelPicaro','checkSelSacerdote'];
 			var metachurro = JSON.stringify(metadata);
-			let toUpdate;
+			var toUpdate;
 			if(metadata.homeClasses && metadata.awayClasses){
-				toUpdate = { metadata: metachurro, status: 2 };
+				Tournament.findById(match.tournament, (err, tournament) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!tournament) return res.status(404).send({message: 'No existe ese torneo'});
+
+					if(tournament.bans == 0){
+						toUpdate = { metadata: metachurro, status: 3 };
+					}
+					else{
+						toUpdate = { metadata: metachurro, status: 2 };
+					}
+					Match.findOneAndUpdate({_id: matchId}, toUpdate, { new:true }).populate('home away').exec((err, matchtUpdated) => {
+						if(err) return res.status(500).send({message: err});
+
+						if(!matchtUpdated) return res.status(404).send({message: 'Ocurrió un error al aceptar el partido'});
+
+						return res.status(200).send({match: matchtUpdated});
+					});
+
+				});
 			}
 			else{
 				toUpdate = { metadata: metachurro };
+				var userToSend;
+				if(userId == match.home){
+					userToSend = match.away;
+				}
+				else{
+					userToSend = match.home;
+				}
+				//avisamos al contrincante de que se ha hecho checkin
+				let urlMatch = 'https://roedor.net/tournament/' + match.tournament + '/match/' + matchId;
+				//comprobamos a qué devices tenemos que enviarle la notificación push
+				var message = {
+				  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+				  contents: {"en": "Tu rival ha seleccionado sus clases"},
+				  include_player_ids: [],
+					url: urlMatch
+				};
+				//TODO arreglar con async-await
+				Device.find({"user": userToSend}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+
+					Match.findOneAndUpdate({_id: matchId}, toUpdate, { new:true }).populate('home away').exec((err, matchtUpdated) => {
+						if(err) return res.status(500).send({message: err});
+
+						if(!matchtUpdated) return res.status(404).send({message: 'Ocurrió un error al aceptar el partido'});
+
+						return res.status(200).send({match: matchtUpdated});
+					});
+
+				});
 			}
 
 			//Match.update({_id: matchId}, query, { multi: false }, (err, matchtUpdated) => {
-			Match.findOneAndUpdate({_id: matchId}, toUpdate, { new:true }).populate('home away').exec((err, matchtUpdated) => {
-				if(err) return res.status(500).send({message: err});
-
-				if(!matchtUpdated) return res.status(404).send({message: 'Ocurrió un error al aceptar el partido'});
-
-				return res.status(200).send({match: matchtUpdated});
-			});
-
 		});
 
 }
@@ -362,6 +449,33 @@ function classesBan(req, res){
 			}
 			else{
 				toUpdate = { metadata: metachurro };
+				var userToSend;
+				if(userId == match.home){
+					userToSend = match.away;
+				}
+				else{
+					userToSend = match.home;
+				}
+				//avisamos al contrincante de que se ha hecho checkin
+				let urlMatch = 'https://roedor.net/tournament/' + match.tournament + '/match/' + matchId;
+				//comprobamos a qué devices tenemos que enviarle la notificación push
+				var message = {
+				  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+				  contents: {"en": "Tu rival ha baneado clases"},
+				  include_player_ids: [],
+					url: urlMatch
+				};
+				//TODO arreglar con async-await
+				Device.find({"user": userToSend}).exec((err, devices) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+					devices.forEach(device => {
+						message.include_player_ids.push(device.serial);
+					});
+					sendNotification(message);
+				});
 			}
 
 			Match.findOneAndUpdate({_id: matchId}, toUpdate, { new:true }).populate('home away').exec((err, matchtUpdated) => {
