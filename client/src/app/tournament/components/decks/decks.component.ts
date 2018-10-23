@@ -26,6 +26,7 @@ export class DecksComponent implements OnInit{
 	public deckName;
 	public deckCode;
 	public deckByCode;
+	public env: string;
 
 	constructor(
 		private _http: HttpClient,
@@ -36,6 +37,7 @@ export class DecksComponent implements OnInit{
 		private _parentComponent: MainComponent
 	){
 		this.url = GLOBAL.url;
+		this.env = GLOBAL.env;
 		this.token = this._userService.getToken();
 		this.identity = this._userService.getIdentity();
 		this.decks = [];
@@ -82,7 +84,12 @@ export class DecksComponent implements OnInit{
 	}
 
 	getCards(){
-			let json_card_set = 'http://localhost:4200/assets/sobres/data/cards.collectible.json';
+			if(this.env == 'DE'){
+				var json_card_set = 'http://localhost:4200/assets/sobres/data/cards.collectible_es_ES.json';
+			}
+			else{
+				var json_card_set = 'https://roedor.net/assets/sobres/data/cards.collectible_es_ES.json';
+			}
 
 			this._http.get<any>(json_card_set).subscribe(
 				data => {
