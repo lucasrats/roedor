@@ -33,8 +33,8 @@
   	<ul class="list-group">
   	  <li *ngFor="let participant of this._parentComponent._tournamentService.participants" class="list-group-item d-flex justify-content-between align-items-center">
   	    {{participant.user.nick}}
-  	    <span *ngIf="participant.checkin" class="glyphicon glyphicon-ok text-success"></span>
-  			<span *ngIf="!participant.checkin" class="glyphicon glyphicon-remove text-warning"></span>
+  	    <span *ngIf="participant.checkin" class="fa fa-check text-success text-left"></span>
+  			<span *ngIf="!participant.checkin" class="fa fa-remove text-danger text-left"></span>
   	  </li>
   	</ul>
   </div>

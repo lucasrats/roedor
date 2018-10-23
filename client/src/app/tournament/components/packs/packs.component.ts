@@ -39,6 +39,7 @@ export class PacksComponent implements OnInit{
 	public json_card_set;
 	public total_cards_in_set;
 	public json_cards_pool;
+	public json_cards_pool_to_send
 	public actualPack;
 
 	public cards_shown;
@@ -76,6 +77,7 @@ export class PacksComponent implements OnInit{
 		this.total_cards_in_set = [];
 		this.actualPack = [];
     this.json_cards_pool = [];
+		this.json_cards_pool_to_send = [];
 	}
 
 	ngOnInit(){
@@ -115,6 +117,7 @@ export class PacksComponent implements OnInit{
 		$(".cardPack").show();
 		$('#newPack').prop( "disabled", true );
 		this.buildCardArrays();
+		this._tournamentService.packs--;
 	}
 
 	buildCardArrays() {
@@ -137,39 +140,39 @@ export class PacksComponent implements OnInit{
 					//Ensure only expert cards from packs are added to each array
 					if (card.collectible == true) {
 						if (card.rarity == 'COMMON') {
-							this.common.push(image_prefix + card.id + image_postfix);
+							this.common.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
 							this.common_name.push(card.name);
 
 							for(var x=0; x<2; x++)
 							{
-								this.total_cards_in_set.push([card.name, card.rarity]);
+								this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
 							}
 
 							//alert(image_prefix + cards.id);
 						}
 						else if (card.rarity == 'RARE') {
-							this.rare.push(image_prefix + card.id + image_postfix);
+							this.rare.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
 							this.rare_name.push(card.name);
 
 							for(var x=0; x<2; x++)
 							{
-								this.total_cards_in_set.push([card.name, card.rarity]);
+								this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
 							}
 						}
 						else if (card.rarity == 'EPIC') {
-							this.epic.push(image_prefix + card.id + image_postfix);
+							this.epic.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
 							this.epic_name.push(card.name);
 
 							for(var x=0; x<2; x++)
 							{
-								this.total_cards_in_set.push([card.name, card.rarity]);
+								this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
 							}
 						}
 						else if (card.rarity == 'LEGENDARY') {
-							this.legendary.push(image_prefix + card.id + image_postfix);
+							this.legendary.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
 							this.legendary_name.push(card.name);
 
-							this.total_cards_in_set.push([card.name, card.rarity]);
+							this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
 						}
 					}
 				});
@@ -255,6 +258,7 @@ export class PacksComponent implements OnInit{
 				var common_index = Math.floor(Math.random() * common.length);
 				tempCard =  common[common_index];
 				//tempCard = common[Math.floor(Math.random() * common.length)];
+				/*
 				for(var x=0; x< this.total_cards_in_set.length; x++)
 				{
 					if(this.total_cards_in_set[x].name == this.common_name[common_index])
@@ -263,6 +267,7 @@ export class PacksComponent implements OnInit{
 						break;
 					}
 				}
+				*/
 				//Do a roll to determine if the common is golden (supposedly 1/50 cards, 1/10 packs, or 2% overall)
 				//If you get 3.7 commons per pack, and 10 packs is 37 commons, then 1 out of 37 should be golden (i.e. ~2.7% of commons are golden)
         /*
@@ -284,7 +289,7 @@ export class PacksComponent implements OnInit{
 				var rare_index = Math.floor(Math.random() * rare.length);
 				tempCard = rare[rare_index];
 				//tempCard = rare[Math.floor(Math.random() * rare.length)];
-
+				/*
 				for(var x=0; x< this.total_cards_in_set.length; x++)
 				{
 					if(this.total_cards_in_set[x].name == this.rare_name[rare_index])
@@ -293,6 +298,7 @@ export class PacksComponent implements OnInit{
 						break;
 					}
 				}
+				*/
 				//Do a roll to determine if the rare is golden (supposedly 1/100 cards, 1/20 packs, or 1% overall)
 				//If you get roughly 1.1 rares per pack, and 20 packs is 22 rares, then 1 out of 22 should be golden (i.e. ~4.55% of rares are golden)
 				//But then there's the 'rare guarantee,'' which skews this, so I'm arbitrarily lowering chances by ~25%... sigh...
@@ -314,7 +320,7 @@ export class PacksComponent implements OnInit{
 				var epic_index = Math.floor(Math.random() * epic.length);
 				tempCard = epic[epic_index];
 				//tempCard = epic[Math.floor(Math.random() * epic.length)];
-
+				/*
 				for(var x=0; x<this.total_cards_in_set.length; x++)
 				{
 					if(this.total_cards_in_set[x].name == this.epic_name[epic_index])
@@ -323,7 +329,7 @@ export class PacksComponent implements OnInit{
 						break;
 					}
 				}
-
+				*/
 				//Do a roll to determine if the epic is golden (supposedly 1/400 cards, 1/80 packs, or 0.25% overall)
 				//If you get roughly 0.2 epics per pack, and 80 packs is 16 epics, then 1/16 should be golden (i.e. ~6.25% of epics are golden)
         /*
@@ -344,7 +350,7 @@ export class PacksComponent implements OnInit{
 				var legendary_index = Math.floor(Math.random() * legendary.length);
 				tempCard = legendary[legendary_index];
 				//tempCard = legendary[Math.floor(Math.random() * legendary.length)];
-
+				/*
 				for(var x=0; x<this.total_cards_in_set.length; x++)
 				{
 					if(this.total_cards_in_set[x].name == this.legendary_name[legendary_index])
@@ -353,7 +359,7 @@ export class PacksComponent implements OnInit{
 						break;
 					}
 				}
-
+				*/
 				//Do a roll to determine if the legendary is golden (supposedly 1/2000 cards, 1/400 packs, or 0.05% overall)
 				//If you get roughly 0.05 legendaries per pack, and 400 packs is 20 legendaries, then 1/20 should be golden (i.e. ~5% of legendaries are golden)
         /*
@@ -377,17 +383,51 @@ export class PacksComponent implements OnInit{
 
 	drawCards(quality, cards) {
 
-		//mandamos las cartas al json de la BD
 		var arr_pack = [];
+		this.json_cards_pool_to_send = JSON.parse(JSON.stringify(this.json_cards_pool));
 
-	  for (let i = 0; i < cards.length; i++) {
-			arr_pack.push(cards[i].substring(cards[i].lastIndexOf("/") + 1, cards[i].lastIndexOf(".")));
-		}
+	  //for (let i = 0; i < cards.length; i++) {
+		cards.forEach(card => {
+
+			//var cardCut = cards[i].url.substring(cards[i].url.lastIndexOf("/") + 1, cards[i].url.lastIndexOf("."));
+			var cardCut = card.url.substring(card.url.lastIndexOf("/") + 1, card.url.lastIndexOf("."));
+			arr_pack.push(cardCut);
+
+			var found = false;
+
+			this.json_cards_pool_to_send.forEach(cardPool => {
+				if(cardPool.id == cardCut){
+					cardPool.quantity++;
+					found = true;
+				}
+			});
+
+			if(found == false){
+				this.json_cards_pool_to_send.push({'id': cardCut, 'quantity': 1, 'cost': card.cost});
+			}
+		});
+		this.json_cards_pool_to_send.sort((a, b) => parseInt(a.cost) - parseInt(b.cost));
+		//mandamos las cartas al json de la BD
+		this._tournamentService.addPackTournament(this.token, this._parentComponent.tournamentId, this.json_cards_pool_to_send).subscribe(
+			response => {
+				if(response.poolUpdated){
+					//console.log(response.deck);
+					//this.json_cards_pool = response.poolUpdated;
+				}
+			},
+			error => {
+				var errorMessage = <any>error;
+				if(errorMessage != null){
+					this.status = 'error';
+				}
+			}
+		);
+
 		this.actualPack = JSON.parse(JSON.stringify(arr_pack));
 
 		//For each element with the 'card' class, replace its front-facing image with one of the new URLs
 		$(".front", ".pack").each(function(i, card){
-			$(card).css("background-image", "url(" + cards[i] + ")");
+			$(card).css("background-image", "url(" + cards[i].url + ")");
 			$(card).parent().attr("class", "cardPack fechado");
 			//necesito poner la rareza en el class para el brillo???
 			$(card).parent().addClass(quality[i]);
@@ -401,44 +441,7 @@ export class PacksComponent implements OnInit{
 		this.cards_shown++;
 
 		if(this.cards_shown > 4){
-			//volcamos el sobre actual en el json de cartas conseguidas en la apertura
-			//console.log(this.actualPack);
-			//console.log(this.json_cards_pool);
-      //TODO Arreglar esta mierda y utilizar el find() para buscar en el JSON
-
-			this.actualPack.forEach(card => {
-				var found = false;
-
-				this.json_cards_pool.forEach(cardPool => {
-					if(cardPool.id == card){
-						cardPool.quantity++;
-						found = true;
-					}
-				});
-
-				if(found == false){
-					this.json_cards_pool.push({'id': card, 'quantity': 1});
-				}
-			});
-
-      //console.log(this.json_cards_pool);
-      this._tournamentService.addPackTournament(this.token, this._parentComponent.tournamentId, this.json_cards_pool).subscribe(
-  			response => {
-  				if(response.poolUpdated){
-  					//console.log(response.deck);
-            this.json_cards_pool = response.poolUpdated;
-  				}
-  			},
-  			error => {
-  				var errorMessage = <any>error;
-  				if(errorMessage != null){
-  					this.status = 'error';
-  				}
-  			}
-  		);
-
-      this._tournamentService.packs--;
-
+			this.json_cards_pool = JSON.parse(JSON.stringify(this.json_cards_pool_to_send));
 		}
 
 	}

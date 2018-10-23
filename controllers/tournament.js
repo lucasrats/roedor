@@ -138,9 +138,14 @@ function joinTournament(req, res){
 			participant.tournament = tournament._id;
 			participant.user = req.user.sub;
 			participant.last_updated = moment().unix();
-			//participant.checkin = false;
+			if(tournament.draft == 0 && tournament.decks == 0){
+				participant.checkin = true;
+			}
+			else{
+				participant.checkin = false;
+			}
 			//TODO Todo el rollo de que se active para hacer el checkin antes del comienzo y tal
-			participant.checkin = true;
+			//participant.checkin = true;
 			participant.packs = tournament.draft;
 
 			participant.save((err, participantStored) => {
@@ -303,6 +308,27 @@ function startTournament(req, res){
 								if(err) return res.status(500).send({message: err});
 
 								if(!matchStored) res.status(404).send({message: 'Ha ocurrido un error al registrar el partido.'});
+
+								//notificación push al usuario del partido
+								let urlTournament = 'https://roedor.net/tournament/' + matchStored.tournament;
+								var message = {
+								  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+								  contents: {"en": "Ha comenzado el torneo: " + tournament.name},
+								  include_player_ids: [],
+									url: urlTournament
+								};
+
+								Device.find({user: {$in: [matchStored.home, matchStored.away]}}).exec((err, devices) => {
+									if(err) return res.status(500).send({message: err});
+
+									if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+									devices.forEach(device => {
+										message.include_player_ids.push(device.serial);
+									});
+									sendNotification(message);
+								});
+
 							});
 							j += 2;
 
@@ -324,6 +350,26 @@ function startTournament(req, res){
 								if(err) return res.status(500).send({message: err});
 
 								if(!matchStored) res.status(404).send({message: 'Ha ocurrido un error al registrar el partido.'});
+
+								//notificación push al usuario del partido
+								let urlTournament = 'https://roedor.net/tournament/' + matchStored.tournament;
+								var message = {
+								  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+								  contents: {"en": "Ha comenzado el torneo: " + tournament.name},
+								  include_player_ids: [],
+									url: urlTournament
+								};
+
+								Device.find({user: matchStored.home}).exec((err, devices) => {
+									if(err) return res.status(500).send({message: err});
+
+									if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+									devices.forEach(device => {
+										message.include_player_ids.push(device.serial);
+									});
+									sendNotification(message);
+								});
 							});
 						}
 
@@ -378,6 +424,26 @@ function startTournament(req, res){
 									if(err) return res.status(500).send({message: err});
 
 									if(!matchStored) res.status(404).send({message: 'Ha ocurrido un error al registrar el partido.'});
+
+									//notificación push al usuario del partido
+									let urlTournament = 'https://roedor.net/tournament/' + matchStored.tournament;
+									var message = {
+									  app_id: "7094c9b9-5033-4055-ac33-4a09e39f63d8",
+									  contents: {"en": "Ha comenzado el torneo: " + tournament.name},
+									  include_player_ids: [],
+										url: urlTournament
+									};
+
+									Device.find({user: {$in: [matchStored.home, matchStored.away]}}).exec((err, devices) => {
+										if(err) return res.status(500).send({message: err});
+
+										if(!devices) return res.status(404).send({message: 'No se encuentran dispositivos'});
+
+										devices.forEach(device => {
+											message.include_player_ids.push(device.serial);
+										});
+										sendNotification(message);
+									});
 
 								});
 
@@ -804,6 +870,7 @@ function addDeckCode(req, res){
 
 		if(!participant.decks){
 			var decksToStore = JSON.stringify([{name: update.name, code: update.code}]);
+			var actualDeck = "";
 		}
 		else{
 			var actualDeck = JSON.parse(participant.decks);
@@ -811,12 +878,25 @@ function addDeckCode(req, res){
 			var decksToStore = JSON.stringify(actualDeck);
 		}
 
-		Participant.update({_id: participant._id}, { decks: decksToStore }, { multi: false }, (err, participantUpdated) => {
-			if(err) return res.status(500).send({message: err});
+		//comprobamos el número de decks que va a tener el usuario, para marcar el checkin como true
+		Tournament.findById(tournamentId).exec((err, tournament) => {
+				if(err) return res.status(500).send({message: err});
 
-			if(!participantUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el mazo'});
+				if(!tournament) return res.status(404).send({message: 'Ocurrió un error al buscar el torneo'});
 
-			return res.status(200).send({deck: {name: update.name, code: update.code}});
+				var checkin = false;
+				if(tournament.decks == actualDeck.length){
+					checkin = true;
+				}
+
+				Participant.update({_id: participant._id}, { decks: decksToStore, checkin: checkin }, { multi: false }, (err, participantUpdated) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!participantUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el mazo'});
+
+					return res.status(200).send({deck: {name: update.name, code: update.code}});
+				});
+
 		});
 
 	});

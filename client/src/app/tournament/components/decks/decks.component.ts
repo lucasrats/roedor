@@ -217,9 +217,11 @@ export class DecksComponent implements OnInit{
 			response => {
 				if(response.deck){
 					//console.log(response.deck);
-					this.decks.push({name: response.deck.name, code: response.deck.code, deck: this.deckByCode});
+					this.decks.push({name: response.deck.name, code: response.deck.code});
 					form.reset();
 					this.deckByCode = [];
+					//conseguimos los participantes actuales del torneos
+					this._parentComponent.getParticipants();
 				}
 			},
 			error => {
