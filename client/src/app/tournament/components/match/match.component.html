@@ -1,81 +1,81 @@
-<div class="col-lg-6">
-
-  <div class="card">
-    <div class="card-block p-1">
-      <b><span><span>Round 1</span></span></b>
-      <span><span>Best Of 3</span></span>
-    </div>
+<div class="row">
+  <div class="col-md-8">
     <div class="card-header alert-info" *ngIf="match && match.status == 5"><strong><span>Default Win</span></strong></div>
-  </div>
 
-  <div class="tab-content" id="pills-tabContent" *ngIf="match">
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-      <li class="nav-item disabled" [ngClass]="{'active': match.status==0}">
-        <a class="nav-link" id="pills-checkin-tab" data-toggle="pill" href="#pills-checkin" role="tab" aria-controls="pills-checkin" aria-selected="true">Fase Check-IN</a>
-      </li>
-      <li class="nav-item disabled" [ngClass]="{'active': match.status==1}">
-        <a class="nav-link" id="pills-clases-tab" data-toggle="pill" href="#pills-clases" role="tab" aria-controls="pills-clases" aria-selected="false">Fase Clases</a>
-      </li>
-      <li class="nav-item disabled" [ngClass]="{'active': match.status==2}">
-        <a class="nav-link" id="pills-bans-tab" data-toggle="pill" href="#pills-bans" role="tab" aria-controls="pills-bans" aria-selected="false">Fase Baneos</a>
-      </li>
-      <li class="nav-item disabled" [ngClass]="{'active': match.status>=3}">
-        <a class="nav-link" id="pills-result-tab" data-toggle="pill" href="#pills-result" role="tab" aria-controls="pills-result" aria-selected="false">Fase Resultado</a>
-      </li>
-    </ul>
+    <div class="tab-content" id="pills-tabContent" *ngIf="match">
+      <!--
+      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item disabled" [ngClass]="{'active': match.status==0}">
+          <a class="nav-link" id="pills-checkin-tab" data-toggle="pill" href="#pills-checkin" role="tab" aria-controls="pills-checkin" aria-selected="true">Fase Check-IN</a>
+        </li>
+        <li class="nav-item disabled" [ngClass]="{'active': match.status==1}">
+          <a class="nav-link" id="pills-clases-tab" data-toggle="pill" href="#pills-clases" role="tab" aria-controls="pills-clases" aria-selected="false">Fase Clases</a>
+        </li>
+        <li class="nav-item disabled" [ngClass]="{'active': match.status==2}">
+          <a class="nav-link" id="pills-bans-tab" data-toggle="pill" href="#pills-bans" role="tab" aria-controls="pills-bans" aria-selected="false">Fase Baneos</a>
+        </li>
+        <li class="nav-item disabled" [ngClass]="{'active': match.status>=3}">
+          <a class="nav-link" id="pills-result-tab" data-toggle="pill" href="#pills-result" role="tab" aria-controls="pills-result" aria-selected="false">Fase Resultado</a>
+        </li>
+      </ul>
+      -->
+      <div class="tab-pane show active" id="pills-checkin" role="tabpanel" aria-labelledby="pills-checkin-tab" *ngIf="match && match.status == 0">
 
-    <div class="tab-pane show active" id="pills-checkin" role="tabpanel" aria-labelledby="pills-checkin-tab" *ngIf="match && match.status == 0">
-
-      <div class="alert alert-success" role="alert" *ngIf="match.homeAccept">
-        {{match.home.nick}} ha aceptado el partido.
-      </div>
-      <div class="alert alert-danger" role="alert" *ngIf="!match.homeAccept">
-        {{match.home.nick}} todavía no ha aceptado el partido.
-      </div>
-      <div class="alert alert-success" role="alert" *ngIf="match.awayAccept">
-        {{match.away.nick}} ha aceptado el partido.
-      </div>
-      <div class="alert alert-danger" role="alert" *ngIf="!match.awayAccept">
-        {{match.away.nick}} todavía no ha aceptado el partido.
-      </div>
-
-      <button type="button" class="btn btn-primary btn-lg btn-block" *ngIf="(identity._id == match.home._id && !match.homeAccept) || (identity._id == match.away._id && !match.awayAccept)" (click)="confirmMatch()">HACER CHECK-IN</button>
-    </div>
-
-    <div class="tab-pane show active" id="pills-clases" role="tabpanel" aria-labelledby="pills-clases-tab" *ngIf="match && match.status == 1">
-      <form #checkClassesForm="ngForm" (submit)="sendClasses()">
-        <div class="col-md-2" *ngFor="let class of classes">
-          <img src="/assets/images/{{class.name}}.png" alt="{{class.name}}" class="img-thumbnail img-check" width="60" />
-          <input type="checkbox" name="{{class.name}}" id="chkClasses" value="val1" [(ngModel)]="class.checked" [disabled]="countClasses == match.tournament.bo" (change)="changed()" />
+        <div class="alert alert-success" role="alert" *ngIf="match.homeAccept">
+          {{match.home.nick}} ha aceptado el partido.
         </div>
-        <input type="submit" id="submitClasses" class="btn btn-success btn-lg btn-block" disabled value="ENVIAR CLASES" />
-      </form>
-    </div>
-
-    <div class="tab-pane show active" id="pills-bans" role="tabpanel" aria-labelledby="pills-bans-tab" *ngIf="match && match.status == 2">
-      <form #checkBansForm="ngForm" (submit)="sendBans()">
-        <div class="col-md-2" *ngFor="let class of opponentClasses">
-          <img src="/assets/images/{{class.name}}.png" alt="{{class.name}}" class="img-thumbnail img-check" width="60" />
-          <input type="checkbox" name="{{class.name}}" id="chkClasses" value="val1" [(ngModel)]="class.checked" [disabled]="countBans == match.tournament.bans" (change)="bansChanged()" />
+        <div class="alert alert-danger" role="alert" *ngIf="!match.homeAccept">
+          {{match.home.nick}} todavía no ha aceptado el partido.
         </div>
-        <input type="submit" id="submitClasses" class="btn btn-success btn-lg btn-block" disabled value="ENVIAR BANEOS" />
-      </form>
-    </div>
+        <div class="alert alert-success" role="alert" *ngIf="match.awayAccept">
+          {{match.away.nick}} ha aceptado el partido.
+        </div>
+        <div class="alert alert-danger" role="alert" *ngIf="!match.awayAccept">
+          {{match.away.nick}} todavía no ha aceptado el partido.
+        </div>
 
-    <div class="tab-pane show active" id="pills-result" role="tabpanel" aria-labelledby="pills-result-tab" *ngIf="match && match.status >= 3">
+        <button type="button" class="btn btn-primary btn-lg btn-block" *ngIf="(identity._id == match.home._id && !match.homeAccept) || (identity._id == match.away._id && !match.awayAccept)" (click)="confirmMatch()">HACER CHECK-IN</button>
+      </div>
 
-      <div class="row">
-          <div class="col-md-6">
-            <div class="card card-cascade narrower">
-                <div class="view gradient-card-header purple-gradient">
-                    <h2 class="h2-responsive"><a href="/perfil/{{match.home._id}}">{{match.home.nick}}</a></h2>
-                    <p>{{match.home.battletag}}</p>
-                    <div class="text-center">
-                      <div class="col-md-6" *ngFor="let class of homeClassesFinal">
-                        <img src="/assets/images/{{class}}.png" alt="{{class}}" class="img-thumbnail img-check" width="40" />
-                      </div>
+      <div class="tab-pane show active" #pillsclases id="pills-clases" role="tabpanel" aria-labelledby="pills-clases-tab" *ngIf="match && match.status == 1">
+          <div class="row">
+            <div class="col-sm" *ngFor="let class of classes">
+              <img src="/assets/images/{{class.name}}.png" alt="{{class.name}}" class="img-thumbnail img-class" width="60" (click)="toggleSelected($event, 'clases')" />
+            </div>
+          </div>
+          <button class="btn btn-success btn-lg btn-block" [disabled]="countClasses < (match.tournament.bo + ((match.tournament.bo % 2) - (match.tournament.bo / 2) - 1) + match.tournament.bans)" (click)="sendClasses()" *ngIf="!sent">ENVIAR CLASES</button>
+          <div class="alert alert-success" *ngIf="sent">
+            <strong>Estas son tus clases.</strong> A la espera de que el adversario elija las suyas.
+          </div>
+      </div>
+
+      <div class="tab-pane show active" id="pills-bans" role="tabpanel" aria-labelledby="pills-bans-tab" *ngIf="match && match.status == 2">
+        <div class="row">
+          <div class="col-sm" *ngFor="let class of classes">
+            <img src="/assets/images/{{class.name}}.png" alt="{{class.name}}" class="img-thumbnail img-class" width="60" (click)="toggleSelected($event, 'bans')" />
+          </div>
+        </div>
+        <button class="btn btn-success btn-lg btn-block" [disabled]="countClasses < match.tournament.bans" (click)="sendBans()" *ngIf="!sent">ENVIAR BANEOS</button>
+        <div class="alert alert-success" *ngIf="sent">
+          <strong>Tus baneos. </strong> A la espera de que el adversario realice los suyos.
+        </div>
+      </div>
+
+      <div class="tab-pane show active" id="pills-result" role="tabpanel" aria-labelledby="pills-result-tab" *ngIf="match && match.status >= 3">
+        <div class="row">
+          <!--<form #resultForm="ngForm" (ngSubmit)="sendResult(newChatForm, $event);">-->
+            <div class="col-md-5 text-center">
+                <h3><a href="/perfil/{{match.home._id}}">{{match.home.nick}}</a></h3>
+                <h5>Clases</h5>
+                <div id="overview-a-picks" class="row">
+                  <div class="col-md-4 text-center" *ngFor="let class of homeClassesFinal">
+                    <div class="well hs-class toggle-class">
+                      <img src="/assets/images/{{class.name}}.png" alt="{{class.name}}" class="img-class" width="40" />
                     </div>
+                  </div>
                 </div>
+                <h5>Resultado</h5>
+                <input type="text" name="homeScore" #homeScore="ngModel" [(ngModel)]="match.homeScore" class="form-control form-control-lg" required *ngIf="match.status == 3" maxlength="1" size="1"/>
                 <div class="card-body text-center" *ngIf="match.status > 3">
                     <div class="card-text">
                       <h1 class="font-weight-bold">{{match.homeScore}}</h1>
@@ -84,18 +84,21 @@
                     </div>
                 </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card card-cascade narrower">
-                <div class="view gradient-card-header purple-gradient">
-                    <h2 class="h2-responsive"><a href="/perfil/{{match.away._id}}">{{match.away.nick}}</a></h2>
-                    <p>{{match.away.battletag}}</p>
-                    <div class="text-center">
-                      <div class="col-md-6" *ngFor="let class of awayClassesFinal">
-                        <img src="/assets/images/{{class}}.png" alt="{{class}}" class="img-thumbnail img-check" width="40" />
-                      </div>
+            <div class="col-md-2 text-center">
+                <h4>vs</h4>
+            </div>
+            <div class="col-md-5 text-center">
+                <h3><a href="/perfil/{{match.away._id}}">{{match.away.nick}}</a></h3>
+                <h5>Clases</h5>
+                <div id="overview-a-picks" class="row">
+                  <div class="col-md-4 text-center" *ngFor="let class of awayClassesFinal">
+                    <div class="well hs-class toggle-class">
+                      <img src="/assets/images/{{class.name}}.png" alt="{{class.name}}" class="img-class" width="40" />
                     </div>
+                  </div>
                 </div>
+                <h5>Resultado</h5>
+                <input type="text" name="awayScore" #awayScore="ngModel" [(ngModel)]="match.awayScore" class="form-control form-control-lg" required *ngIf="match.status == 3" maxlength="1" size="1"/>
                 <div class="card-body text-center" *ngIf="match.status > 3">
                     <div class="card-text">
                       <h1 class="font-weight-bold">{{match.awayScore}}</h1>
@@ -104,52 +107,40 @@
                     </div>
                 </div>
             </div>
-          </div>
+            <br />
+            <button class="btn btn-success btn-lg btn-block" [disabled]="!match.homeScore || !match.awayScore" (click)="sendResult()" *ngIf="match.status == 3">Enviar resultado</button>
+            <!--<input type="submit" value="Enviar resultado" class="btn btn-warning" [disabled]="!resultForm.form.valid" />
+          </form>-->
         </div>
-
-        <div class="row" *ngIf="match.status == 3">
-          <form #resultForm="ngForm" (ngSubmit)="sendResult(newChatForm, $event);">
-            <div class="col-md-6">
-              <input type="text" name="homeScore" #homeScore="ngModel" [(ngModel)]="match.homeScore" class="form-control" required />
-            </div>
-
-            <div class="col-md-6">
-              <input type="text" name="awayScore" #awayScore="ngModel" [(ngModel)]="match.awayScore" class="form-control" required />
-            </div>
-
-            <input type="submit" value="Enviar resultado" class="btn btn-warning" [disabled]="!resultForm.form.valid" />
-
-          </form>
-        </div>
+      </div>
     </div>
   </div>
-</div>
+  <div class="col-md-4">
+    <div id="message-wrap" class="message-wrap">
+      <div id="msg-wrap" class="msg-wrap">
+          <div class="media msg" *ngFor="let chat of chatHistory">
+            <!--
+              <a class="pull-left" href="#">
+                  <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="#">
+              </a>
+            -->
+              <div class="media-body">
+                  <small class="pull-right time"><i class="fa fa-clock-o"></i> {{(chat.date | amFromUnix | amLocale:'es')}}</small>
+                  <h5 class="media-heading">{{chat.user}}</h5>
 
-<div class="col-lg-6">
-  <div id="message-wrap" class="message-wrap">
-    <div id="msg-wrap" class="msg-wrap">
-        <div class="media msg" *ngFor="let chat of chatHistory">
-          <!--
-            <a class="pull-left" href="#">
-                <img class="media-object" data-src="holder.js/64x64" alt="64x64" style="width: 32px; height: 32px;" src="#">
-            </a>
-          -->
-            <div class="media-body">
-                <small class="pull-right time"><i class="fa fa-clock-o"></i> {{(chat.date | amFromUnix | amLocale:'es')}}</small>
-                <h5 class="media-heading">{{chat.user}}</h5>
-
-                <small class="col-lg-10">{{chat.text}}</small>
-            </div>
+                  <small class="col-lg-10">{{chat.text}}</small>
+              </div>
+          </div>
+      </div>
+      <form #newChatForm="ngForm" (ngSubmit)="onSubmit(newChatForm, $event);">
+        <div class="send-wrap">
+            <textarea id="textChat" class="form-control send-message" rows="3" placeholder="Escribe tu mensaje..."></textarea>
         </div>
+        <div class="btn-panel">
+            <!--<button class=" col-lg-4 text-right btn   send-message-btn pull-right" role="button" (click)="addChatTournament()"><i class="fa fa-plus"></i> Send Message</button>-->
+            <input type="submit" value="Enviar" class="btn btn-success" [disabled]="!newChatForm.form.valid" />
+        </div>
+      </form>
     </div>
-    <form #newChatForm="ngForm" (ngSubmit)="onSubmit(newChatForm, $event);">
-      <div class="send-wrap">
-          <textarea id="textChat" class="form-control send-message" rows="3" placeholder="Write a reply..."></textarea>
-      </div>
-      <div class="btn-panel">
-          <!--<button class=" col-lg-4 text-right btn   send-message-btn pull-right" role="button" (click)="addChatTournament()"><i class="fa fa-plus"></i> Send Message</button>-->
-          <input type="submit" value="Enviar" class="btn btn-success" [disabled]="!newChatForm.form.valid" />
-      </div>
-    </form>
   </div>
 </div>

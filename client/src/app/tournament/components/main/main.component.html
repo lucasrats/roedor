@@ -1,73 +1,47 @@
 <div class="container-fluid">
-
   <div class="row">
-    <!--<nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">-->
-    <nav class="col-2">
-  		<div *ngIf="tournament && !tournament.active">
-  			<button class="btn btn-success" *ngIf="!participant" (click)="joinTournament()">
-  				Unirse
-  			</button>
-  			<button class="btn btn-danger" *ngIf="participant" (click)="unjoinTournament()">
-  				Desapuntarse
-  			</button>
-  			<button class="btn btn-success" *ngIf="participant && checkin" (click)="unjoinTournament()">
-  				Check-IN
-  			</button>
-  		</div>
+    <div class="col-md">
+      <div class="jumbotron jumbotron-fluid">
 
-  		<div class="sidebar-admin">
-  			<ul class="list-group">
-  				<li class="list-group-item list-group-item-action" role="presentation" [routerLinkActive]="['active']">
-  					<a [routerLink]="['lobby']">Lobby</a>
-  				</li>
-  				<li class="list-group-item list-group-item-action" role="presentation" [routerLinkActive]="['active']">
-  					<a [routerLink]="['rules']">Reglas</a>
-  				</li>
-  				<li class="list-group-item list-group-item-action" role="presentation" [routerLinkActive]="['active']">
-  					<a [routerLink]="['bracket']">Bracket/Partidos</a>
-  				</li>
-          <li class="list-group-item list-group-item-action" role="presentation" [routerLinkActive]="['active']" *ngIf="participant && tournament.draft > 0">
-  					<a [routerLink]="['packs']">Sobres <span class="badge badge-light">{{_tournamentService.packs}}</span></a>
-  				</li>
-          <li class="list-group-item list-group-item-action" role="presentation" [routerLinkActive]="['active']" *ngIf="participant && tournament.decks > 0">
-  					<a [routerLink]="['decks']">Mazos</a>
-  				</li>
-          <!--
-  				<li class="list-group-item" role="presentation" [routerLinkActive]="['active']">
-  					<a [routerLink]="['streams']">Streams</a>
-  				</li>
-          -->
-          <li class="list-group-item list-group-item-action list-group-item-warning" *ngIf="manageTournament && tournament && !tournament.active">
-            Pulsa el botón para generar los primeros partidos y dar comienzo al torneo <br />
-  					<button type="button" class="btn btn-success btn-lg" (click)="startTournament()">Comenzar</button>
-  				</li>
-          <li class="list-group-item list-group-item-action list-group-item-warning" *ngIf="manageTournament && tournament && tournament.active">
-            Cuando no queden partidos pendientes de la jornada podemos generar la siguiente <br />
-  					<button type="button" class="btn btn-primary btn-lg" (click)="nextRound()" [disabled]="matchesLeftNextRound > 0">Generar</button>
-  				</li>
-  			</ul>
-  		</div>
-  	</nav>
-
-
-
-    <div class="col">
-      <div class="row" *ngIf="manageTournament">
-        <div class="alert alert-warning" role="alert">
-          Como administrador del torneo tienes acceso a las secciones amarillas para gestionarlo, así como editar resultados directamente en la tabla.
+        <div class="container" *ngIf="tournament">
+          <h1>{{tournament.name}}</h1>
+          <h5><i class="fa fa-camera-retro"></i> BO{{tournament.bo}} con {{tournament.bans}} bans</h5>
+          <!--<a class="btn peach-gradient"><i class="fa fa-clone left"></i> View project</a>-->
+          <button class="btn btn-success" *ngIf="!participant && !tournament.active" (click)="joinTournament()">Unirse</button>
+          <button class="btn btn-danger" *ngIf="participant && !tournament.active" (click)="unjoinTournament()">Desapuntarse</button>
+          <button class="btn btn-success" *ngIf="participant && checkin" (click)="unjoinTournament()">Check-IN</button>
         </div>
       </div>
 
-      <div class="jumbotron jumbotron-fluid">
-        <div class="container" *ngIf="tournament">
-          <h1 class="display-4">{{tournament.name}}</h1>
-          <p class="lead">BO{{tournament.bo}} con {{tournament.bans}} bans</p>
+    </div>
+
+    <div class="col-md-3" *ngIf="manageTournament && tournament">
+      <div class="card text-white bg-warning mb-3" style="max-width: 18rem;" *ngIf="!tournament.active">
+        <div class="card-body">
+          <h5 class="card-title">Info card title</h5>
+          <p class="card-text">Pulsa el botón para generar los primeros partidos y dar comienzo al torneo <br />
+          <button type="button" class="btn btn-success btn-lg" (click)="startTournament()">Comenzar</button></p>
+        </div>
+      </div>
+
+      <div class="card text-white bg-success mb-3" style="max-width: 18rem;" *ngIf="tournament.active">
+        <div class="card-body">
+          <h5 class="card-title">Info card title</h5>
+          <p class="card-text">Cuando no queden partidos pendientes de la jornada podemos generar la siguiente <br />
+          <button type="button" class="btn btn-primary btn-lg" (click)="nextRound()" [disabled]="matchesLeftNextRound > 0">Generar</button></p>
         </div>
       </div>
     </div>
+
   </div>
 
-
+  <nav class="nav nav-pills flex-column flex-sm-row">
+    <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['lobby']">Lobby</a>
+    <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['rules']">Reglas</a>
+    <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['bracket']">Bracket/Partidos</a>
+    <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['packs']" *ngIf="participant && tournament.draft > 0">Sobres <span class="badge badge-light">{{_tournamentService.packs}}</span></a>
+    <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['decks']" *ngIf="participant && tournament.decks > 0">Mazos</a>
+  </nav>
 
   <div class="row">
     <div class="container-fluid">

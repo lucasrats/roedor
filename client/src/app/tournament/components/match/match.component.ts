@@ -33,6 +33,7 @@ export class MatchComponent implements OnInit{
 	public countClasses;
 	public countBans;
 	public opponentClasses;
+	public sent: boolean;
 	private homeClassesFinal;
 	private awayClassesFinal;
 
@@ -62,15 +63,13 @@ export class MatchComponent implements OnInit{
 										{"name":"picaro"},
 										{"name":"sacerdote"}
 									];
-		this.classes.forEach(item => {
-      item['checked']=false;
-    });
 		this.countClasses = 0;
 		this.countBans = 0;
 		this.opponentClasses = [];
 		this.homeClassesFinal = [];
 		this.awayClassesFinal = [];
 		this.chatHistory = [];
+		this.sent = false;
 	}
 
 	ngOnInit(){
@@ -146,49 +145,55 @@ export class MatchComponent implements OnInit{
 							if(this.match.metadata){
 								metadata = JSON.parse(this.match.metadata);
 							}
-							//console.log(this.match.metadata);
 							//según sea home o away, tildamos los checks
 							if(this.match.status >= 3){
 								//pillamos las clases finales de cada uno
+								this.homeClassesFinal = JSON.parse(JSON.stringify(metadata.homeClassesFinal));
+								this.awayClassesFinal = JSON.parse(JSON.stringify(metadata.awayClassesFinal));
+								console.log(this.homeClassesFinal);
+								/*
 								for (var key in metadata.homeClassesFinal) {
 										this.homeClassesFinal.push(metadata.homeClassesFinal[key]);
 								}
 								for (var key in metadata.awayClassesFinal) {
 										this.awayClassesFinal.push(metadata.awayClassesFinal[key]);
 								}
+								*/
 
 							}else if(this.identity._id == this.match.home._id){
-
 								//home
 								if(metadata.homeClasses && !metadata.homeClassesBan){
-									this.classes.forEach(item => {
-										if(Object.values(metadata.homeClasses).includes(item.name)){
-							      	item['checked']=true;
-											this.countClasses++;
-										}
-										//$('input[ng-reflect-name^=' + item.name + ']').prop('disabled', true);
-							    });
+									//ponemos el sent a true para que no pueda enviarse nada más
+
 									if(metadata.awayClasses){
+										/*
 										for (var key in metadata.awayClasses) {
-										    this.opponentClasses.push({"name": metadata.awayClasses[key], "checked": false});
+										    this.opponentClasses.push({"name": metadata.awayClasses[key]});
 										}
+										*/
+										this.classes = JSON.parse(JSON.stringify(metadata.awayClasses));
+									}
+									else{
+										this.sent = true;
+										this.classes = JSON.parse(JSON.stringify(metadata.homeClasses));
 									}
 								}
-							}else{
-
+							}else if(this.identity._id == this.match.away._id){
 								//away
 								if(metadata.awayClasses && !metadata.awayClassesBan){
-									this.classes.forEach(item => {
-										if(Object.values(metadata.awayClasses).includes(item.name)){
-							      	item['checked']=true;
-											this.countClasses++;
-										}
-										//$('input[ng-reflect-name^=' + item.name + ']').prop('disabled', true);
-							    });
+									//ponemos el sent a true para que no pueda enviarse nada más
+
 									if(metadata.homeClasses){
+										this.classes = JSON.parse(JSON.stringify(metadata.homeClasses));
+										/*
 										for (var key in metadata.homeClasses) {
-										    this.opponentClasses.push({"name": metadata.homeClasses[key], "checked": false});
+										    this.opponentClasses.push({"name": metadata.homeClasses[key]});
 										}
+										*/
+									}
+									else{
+										this.sent = true;
+										this.classes = JSON.parse(JSON.stringify(metadata.awayClasses));
 									}
 								}
 							}
@@ -338,14 +343,15 @@ export class MatchComponent implements OnInit{
 
 	sendClasses(){
 
-		let classesSelect = {};
+		var classesSelect = [];
 
-		//this.classes.forEach(item => {
-		this.classes.forEach(function(item, i){
-			if(item.checked){
-					classesSelect[i] = item.name;
-			}
-		});
+		var imgs = document.getElementById('pills-clases').querySelectorAll('.border-primary');
+		for (let i in imgs) {
+		  if (imgs.hasOwnProperty(i)) {
+		    classesSelect.push({name: imgs[i].getAttribute('alt')});
+		  }
+		}
+
 		//console.log(classesSelect);
 		this._matchService.classesSelect(this.token, this.matchId, classesSelect).subscribe(
 			response => {
@@ -353,10 +359,14 @@ export class MatchComponent implements OnInit{
 					this.match = response.match;
 
 					//deshabilitamos todo y escondemos botón
-					this.classes.forEach(item => {
-			    	$('input[ng-reflect-name^=' + item.name + ']').prop('disabled', true);
-						$('#submitClasses').hide();
-			    });
+					imgs = document.getElementById('pills-clases').querySelectorAll('.img-class');
+					for (let i in imgs) {
+					  if (imgs.hasOwnProperty(i)) {
+					    imgs[i].setAttribute('disabled', 'true');
+					  }
+					}
+					this.countClasses = 0;
+					this.sent = true;
 
 					this.socket.emit('opponent-classes');
 					this.getMatch();
@@ -391,32 +401,31 @@ export class MatchComponent implements OnInit{
 
 	sendBans(){
 
-		let classesBans = {};
+		var classesBans = [];
 
-		this.opponentClasses.forEach(function(item, i){
-			if(item.checked){
-					classesBans[i] = item.name;
-			}
-		});
+		var imgs = document.getElementById('pills-bans').querySelectorAll('.border-primary');
+		for (let i in imgs) {
+		  if (imgs.hasOwnProperty(i)) {
+		    classesBans.push({name: imgs[i].getAttribute('alt')});
+		  }
+		}
 		this._matchService.classesBan(this.token, this.matchId, classesBans).subscribe(
 			response => {
 				if(response){
 					this.match = response.match;
 
-/*
-					if(this.identity._id == this.match.home._id){
-						this.opponentClasses = JSON.parse(this.match.metadata.awayClassesBan);
-						this.opponentClasses.forEach(item => {
-				      item['checked']=false;
-				    });
-					}else{
-						this.opponentClasses = JSON.parse(this.match.metadata.homeClassesBan);
-						this.opponentClasses.forEach(item => {
-				      item['checked']=false;
-				    });
-					}
-*/
 					//deshabilitamos todo y escondemos botón
+					imgs = document.getElementById('pills-bans').querySelectorAll('.img-class');
+					for (let i in imgs) {
+					  if (imgs.hasOwnProperty(i)) {
+					    imgs[i].setAttribute('disabled', 'true');
+					  }
+					}
+					this.countClasses = 0;
+					this.sent = true;
+
+					this.socket.emit('opponent-classes');
+					this.getMatch();
 
 					this.socket.emit('opponent-bans');
 					this.getMatch();
@@ -487,6 +496,62 @@ export class MatchComponent implements OnInit{
 				}
 			}
 		);
+	}
+
+	toggleSelected(event, origin){
+		if(!this.sent){
+			if(event.target.classList.contains('border', 'border-primary')){
+				event.target.classList.remove('border', 'border-primary');
+				this.countClasses--;
+			}
+			else{
+				event.target.classList.add('border', 'border-primary');
+				this.countClasses++;
+			}
+
+			if(origin == 'clases'){
+				if(this.countClasses >= (this.match.tournament.bo + ((this.match.tournament.bo % 2) - (this.match.tournament.bo / 2) - 1) + this.match.tournament.bans)){
+					var imgs = document.getElementById('pills-clases').querySelectorAll('.img-class:not(.border)');
+					for (let i in imgs) {
+					  if (imgs.hasOwnProperty(i)) {
+					    imgs[i].classList.add('disabled');
+					  }
+					}
+					/*
+					imgs.forEach(function(el) {
+							el.classList.add('disabled');
+					});
+					*/
+				}
+				else{
+					var imgs = document.getElementById('pills-clases').querySelectorAll('.img-class:not(.border)');
+					for (let i in imgs) {
+					  if (imgs.hasOwnProperty(i)) {
+					    imgs[i].classList.remove('disabled');
+					  }
+					}
+				}
+			}
+			else{
+				if(this.countClasses >= this.match.tournament.bans){
+					var imgs = document.getElementById('pills-bans').querySelectorAll('.img-class:not(.border)');
+					for (let i in imgs) {
+					  if (imgs.hasOwnProperty(i)) {
+					    imgs[i].classList.add('disabled');
+					  }
+					}
+				}
+				else{
+					var imgs = document.getElementById('pills-bans').querySelectorAll('.img-class:not(.border)');
+					for (let i in imgs) {
+					  if (imgs.hasOwnProperty(i)) {
+					    imgs[i].classList.remove('disabled');
+					  }
+					}
+				}
+			}
+		}
+
 	}
 
 }

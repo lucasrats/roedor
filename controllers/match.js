@@ -410,32 +410,28 @@ function classesBan(req, res){
 			}
 
 			if(userId == match.home){
+				metadata.awayClassesFinal = [];
 				metadata.homeClassesBan = bans;
-				metadata.awayClassesFinal = JSON.parse(JSON.stringify(metadata.awayClasses));
-				//rellenamos el awayClassesFinal
-				for (var key1 in metadata.awayClasses) {
-					for(var key2 in bans) {
-						//console.log(bans[key2] + ' vs ' + metadata.awayClasses[key1]);
-						if(bans[key2] == metadata.awayClasses[key1]){
-							delete metadata.awayClassesFinal[key1];
-							continue;
-						}
+				metadata.awayClasses.forEach(classBan => {
+					if(!metadata.homeClassesBan.find(function(element){
+						//console.log(element.name + ' vs ' + classBan.name);
+					  return element.name == classBan.name}
+					)){
+						metadata.awayClassesFinal.push(classBan);
 					}
-				}
+				});
 
 			}else if(userId == match.away){
+				metadata.homeClassesFinal = [];
 				metadata.awayClassesBan = bans;
-				metadata.homeClassesFinal = JSON.parse(JSON.stringify(metadata.homeClasses));
-				//rellenamos el homeClassesFinal
-				for (var key1 in metadata.homeClasses) {
-					for(var key2 in bans) {
-						//console.log(bans[key2] + ' vs ' + metadata.homeClasses[key1]);
-						if(bans[key2] == metadata.homeClasses[key1]){
-							delete metadata.homeClassesFinal[key1];
-							continue;
-						}
+				metadata.homeClasses.forEach(classBan => {
+					if(!metadata.awayClassesBan.find(function(element){
+						//console.log(element.name + ' vs ' + classBan.name);
+					  return element.name == classBan.name}
+					)){
+						metadata.homeClassesFinal.push(classBan);
 					}
-				}
+				});
 			}
 			else{
 				return res.status(404).send({message: 'No se han seleccionado clases anteriormente. Consulta con el administrador.'});
