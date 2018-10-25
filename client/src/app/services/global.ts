@@ -1,4 +1,4 @@
 export var GLOBAL = {
-	url: 'http://localhost:3800/api/',
-	env: 'DE'
+	url: 'https://roedor.net/api/',
+	env: 'PR'
 }
