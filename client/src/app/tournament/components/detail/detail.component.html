@@ -19,7 +19,7 @@
       </div>
       <form #newChatForm="ngForm" (ngSubmit)="onSubmit(newChatForm, $event);">
         <div class="send-wrap">
-            <textarea id="textChat" class="form-control send-message" rows="3" placeholder="Write a reply..."></textarea>
+            <textarea id="textChat" class="form-control send-message" rows="3" placeholder="Escribe tu mensaje..."></textarea>
         </div>
         <div class="btn-panel">
             <!--<button class=" col-lg-4 text-right btn   send-message-btn pull-right" role="button" (click)="addChatTournament()"><i class="fa fa-plus"></i> Send Message</button>-->
@@ -32,7 +32,7 @@
   	<h3>Participantes</h3>
   	<ul class="list-group">
   	  <li *ngFor="let participant of this._parentComponent._tournamentService.participants" class="list-group-item d-flex justify-content-between align-items-center">
-  	    {{participant.user.nick}}
+  	    <img [src]="participant.user.image != null ? url + 'get-image-user/' + participant.user.image : 'assets/images/avatarDef.png'" class="rounded-circle" width="40" alt="{{participant.user.nick}}"> {{participant.user.nick}}
   	    <span *ngIf="participant.checkin" class="fa fa-check text-success text-left"></span>
   			<span *ngIf="!participant.checkin" class="fa fa-remove text-danger text-left"></span>
   	  </li>

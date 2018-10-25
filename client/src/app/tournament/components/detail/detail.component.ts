@@ -106,6 +106,7 @@ export class DetailComponent implements OnInit{
 					this.socket.emit('new-chat', response.chat);
 					this.chatHistory.push(response.chat);
 					$('.msg-wrap').scrollTop($('.msg-wrap')[0].scrollHeight);
+					form.reset();
 					//scroll automático con jquery
 					//console.log(response.chat);
 					//this._router.navigate(['/tournament/' + this._parentComponent.tournamentId + '/lobby']);

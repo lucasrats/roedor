@@ -5,8 +5,7 @@
 
 	<div id="data-profile" *ngIf="user">
 		<div class="avatar pull-left">
-			<a href="#"><img src="{{ url + 'get-image-user/' + user.image }}" class="avatar-default" *ngIf="user.image" /></a>
-			<a href="#"><img src="assets/default_user.png" class="avatar-default" *ngIf="!user.image" /></a>
+			<a href="#"><img [src]="participant.user.image != null ? url + 'get-image-user/' + participant.user.image : 'assets/images/avatarDef.png'" class="avatar-default" /></a>
 		</div>
 
 		<div class="user-name pull-left">
@@ -20,7 +19,7 @@
 			</div>
 
 			<div class="follow">
-				
+
 				<button class="btn btn-success" *ngIf="!following" (click)="followUser(user._id)">
 					Seguir
 				</button>
