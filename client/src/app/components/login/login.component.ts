@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit{
 	public status: string;
 	public identity;
 	public token;
+	public reboot: boolean;
 
 	constructor(
 		private _route: ActivatedRoute,
@@ -23,9 +24,10 @@ export class LoginComponent implements OnInit{
 		private _userService: UserService
 	){
 		this.title = 'Identifícate';
-		this.user = new User("","","","","","","ROLE_USER","");
+		this.user = new User("","","","","","","ROLE_USER","", "");
+		this.reboot = false;
 	}
-	
+
 	ngOnInit(){
 		console.log('Componente de login cargado...');
 	}
@@ -91,5 +93,21 @@ export class LoginComponent implements OnInit{
 				console.log(<any>error);
 			}
 		)
+	}
+
+	onSubmitReboot(){
+
+		this._userService.sendTokenReboot(this.user.email).subscribe(
+			response => {
+					this.status = 'success';
+			},
+			error => {
+				var errorMessage = <any>error;
+				console.log(errorMessage);
+				if(errorMessage != null){
+					this.status = 'error';
+				}
+			}
+		);
 	}
 }

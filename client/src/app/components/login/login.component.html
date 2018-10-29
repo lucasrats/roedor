@@ -1,10 +1,10 @@
-<div class="col-lg-5">
+<div class="col-lg-5" *ngIf="!reboot">
 	<h1 class="h1-strong">{{title}}</h1>
-
+<!--
 	<div class="alert alert-success" *ngIf="status == 'success'">
 		Te has identificado correctamente, bienvenido!
 	</div>
-
+-->
 	<div class="alert alert-danger" *ngIf="status == 'error'">
 		No te has podido identificar correctamente. Prueba de nuevo o revisa tu correo si no has confirmado el usuario aún.
 	</div>
@@ -27,5 +27,36 @@
 		</p>
 
 		<input type="submit" value="Enviar" class="btn btn-success" [disabled]="!loginForm.valid" />
+	</form>
+	<p>
+		<button type="button" class="btn btn-dark" (click)="reboot = true;">¿No recuerdas tu contraseña?</button>
+	</p>
+</div>
+
+<div class="col-lg-5" *ngIf="reboot">
+	<h1 class="h1-strong">Restablecer contraseña</h1>
+
+	<div class="alert alert-success" *ngIf="status == 'success'">
+		Por favor revisa tu email, en unos minutos te llegará un correo con instrucciones para restablecer la contraseña. Gracias.
+	</div>
+
+	<div class="alert alert-danger" *ngIf="status == 'error'">
+		El email no se ha encontrado o no está activo. Por favor, revísalo.
+	</div>
+
+	<p>
+		<button type="button" class="btn btn-dark" (click)="reboot = false;"><span class="fa fa-arrow-circle-o-left"></span> Volver a login</button>
+	</p>
+
+	<form #rebootForm="ngForm" (ngSubmit)="onSubmitReboot()" class="col-lg-12">
+		<p>
+			<label>Correo electrónico</label>
+			<input type="email" name="email" #email="ngModel" [(ngModel)]="user.email" class="form-control" required pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"/>
+			<span *ngIf="!email.valid && email.touched">
+				El email no es correcto
+			</span>
+		</p>
+
+		<input type="submit" value="Enviar" class="btn btn-success" [disabled]="!rebootForm.valid" />
 	</form>
 </div>

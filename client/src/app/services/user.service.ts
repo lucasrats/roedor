@@ -144,4 +144,16 @@ export class UserService{
 		return this._http.post(this.url + 'user-device', params, {headers: headers});
 	}
 
+	sendTokenReboot(email): Observable<any>{
+		let params = JSON.parse('{\"email\": \"' + email + '\"}');
+
+		return this._http.post(this.url + 'send-token-reboot', params);
+	}
+
+	newPasswordByToken(password, token): Observable<any>{
+		let params = JSON.parse('{\"password\": \"' + password + '\", \"token\": \"' + token + '\"}');
+
+		return this._http.post(this.url + 'new-password-by-token', params);
+	}
+
 }

@@ -485,6 +485,85 @@ function removeDevice(req, res){
 	}
 }
 
+function sendTokenReboot(req, res){
+	var params = req.body;
+
+	var email = params.email;
+
+	User.findOne({email: email, active: true}, (err, user) => {
+		if(err) return res.status(500).send({message: 'Error en la petición'});
+
+		if(user){
+			user.token = moment().unix();
+
+			user.save((err, userStored) => {
+				if(err) return res.status(500).send({message: 'Error al guardar el usuario'});
+
+				// si tenemos userStored, es que se ha realizado bien
+				if(userStored){
+
+					//enviamos email con el token
+					let transporter = nodemailer.createTransport({
+							host: 'smtp.zoho.com',
+							port: 465,
+							secure: true, // true for 465, false for other ports
+							auth: {
+									user: 'info@roedor.net', // generated ethereal user
+									pass: 'zeusz4byc88_' // generated ethereal password
+							}
+					});
+
+					// setup email data with unicode symbols
+					let urlActivate = 'https://roedor.net/password-recovery?token=' + userStored.token;
+					let mailOptions = {
+							from: '"Roedor.net" <info@roedor.net>', // sender address
+							to: userStored.email, // list of receivers
+							subject: 'Restablecer contraseña', // Subject line
+							text: 'Hemos recibido una solicitud para restablecer la contraseña. Por favor, continua con el siguiente enlace para definirla:', // plain text body
+							html: 'Hemos recibido una solicitud para restablecer la contraseña. Por favor, continúa con el siguiente enlace para definirla: <br /><a href="' + urlActivate + '">' + urlActivate + '</a><br />Si no has sido tú quien lo ha solicitado, ignora este email.' // html body
+					};
+
+					// send mail with defined transport object
+					transporter.sendMail(mailOptions, (error, info) => {
+							if (error) {
+									return console.log(error);
+							}
+							console.log('Message sent: %s', info.messageId);
+							// Preview only available when sending through an Ethereal account
+							//console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+							// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+							// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+					});
+
+					res.status(200).send({user: userStored});
+				}else{
+					res.status(404).send({message: 'No se ha registrado el usuario'});
+				}
+			});
+
+		}else{
+			return res.status(404).send({message: 'El email no se ha encontrado o no está activo. Por favor, revísalo.'});
+		}
+	});
+}
+
+function newPasswordByToken(req, res){
+
+	var params = req.body;
+	bcrypt.hash(params.password, null, null, (err, hash) => {
+		User.findOneAndUpdate({token: params.token}, {token: '', password: hash}, {new: true}, (err, userUpdated) =>{
+			if(err) return res.status(500).send({message: 'Error en la petición'});
+
+			if(!userUpdated) return res.status(404).send({message: 'No se ha podido actualizar ese usuario'});
+
+			//TODO enviar un email con bienvenida e instrucciones iniciales
+
+			return res.status(200).send({user: userUpdated});
+		});
+	});
+
+}
 
 module.exports = {
 	saveUser,
@@ -498,5 +577,7 @@ module.exports = {
 	saveDevice,
 	getDevices,
 	activateUserRegistration,
-	removeDevice
+	removeDevice,
+	sendTokenReboot,
+	newPasswordByToken
 }

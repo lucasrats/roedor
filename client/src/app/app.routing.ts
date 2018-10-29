@@ -8,6 +8,7 @@ import { HomeComponent } from './components/home/home.component';
 import { UserEditComponent } from './components/user-edit/user-edit.component';
 import { UsersComponent } from './components/users/users.component';
 import { UserActivateComponent } from './components/user-activate/user-activate.component';
+import { RecoveryPassComponent } from './components/recovery-pass/recovery-pass.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { FollowingComponent } from './components/following/following.component';
@@ -25,6 +26,7 @@ const appRoutes: Routes = [
 	{path: 'login', component: LoginComponent},
 	{path: 'registro', component: RegisterComponent},
 	{path: 'user-activate', component: UserActivateComponent},
+	{path: 'password-recovery', component: RecoveryPassComponent},
 	{path: 'mis-datos', component: UserEditComponent, canActivate:[UserGuard]},
 	{path: 'mis-partidos', component: MatchesComponent, canActivate:[UserGuard]},
 	{path: 'gente', component: UsersComponent, canActivate:[UserGuard]},
