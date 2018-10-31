@@ -12,7 +12,7 @@
         <label>Código de mazo</label>
         <textarea class="form-control" id="code" name="code" #code="ngModel" [(ngModel)]="deckCode" rows="6" (paste)="getDeckByCode($event.clipboardData.getData('text/plain'))" placeholder='Copia tu mazo aquí'></textarea>
         <span class="alert alert-danger" *ngIf="status == 'error'">
-      		Ha ocurrido un error con el código, por favor, asegúrate que es correcto.
+      		El mazo enviado no es correcto, por favor, revisa las cartas y las copias con respecto a tu draft.
       	</span>
       </p>
       <input type="submit" value="Enviar" class="btn btn-success" [disabled]="!deckByCodeForm.form.valid || status == 'error'" />

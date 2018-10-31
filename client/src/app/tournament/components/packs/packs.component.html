@@ -1,12 +1,12 @@
 <div class="row">
 	<div class="col-md-10">
 		<div class="row">
-			<div *ngIf="_tournamentService.packs > 0">
-				<div class="alert alert-info alert-dismissable">
+			<div *ngIf="_tournamentService.packs >= 0 || actualPack.length > 0">
+				<div class="alert alert-info">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
           	<b>Te restan {{_tournamentService.packs}} sobres.</b>
         </div>
-				<button type="button" class="btn btn-danger btn-lg" id="newPack" (click)="openPack()">ABRIR SOBRE</button>
+				<button type="button" class="btn btn-danger btn-lg" id="newPack" (click)="openPack()" *ngIf="_tournamentService.packs > 0">ABRIR SOBRE</button>
 
 				<div class="pack">
 					<div class="cardPack fechado common" style="display:none;" (mousedown)="clickCard()">
@@ -36,40 +36,13 @@
 					</div>
 				</div>
 			</div>
-			<div *ngIf="packs == 0">
-				<div class="alert alert-info alert-dismissable">
-	          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-	        	<b>Ojalá hayas tenido una buena apertura</b> Por favor, env&iacute;a tus c&oacute;digos de mazo a info@roedor.net
-	      </div>
-				<ul class="list-group">
-				  <li class="list-group-item">Cras justo odio</li>
-				  <li class="list-group-item">Dapibus ac facilisis in</li>
-				  <li class="list-group-item">Morbi leo risus</li>
-				  <li class="list-group-item">Porta ac consectetur ac</li>
-				  <li class="list-group-item">Vestibulum at eros</li>
-				</ul>
-			</div>
-
 		</div>
-
-<!--
-		<div class="row">
-			{% for deck in decks_user %}
-			  {{deck.deck}}
-			{% endfor %}
-
-			<br />
-			OJETE<br />
-			{{str}}
-		</div>
-	</div>
--->
 	</div>
 </div>
 
 <div class="row text-center">
 	<div class="col-xs-2" *ngFor="let card of json_cards_pool">
-	<figure>
+	<figure *ngIf="card.rarity != 'FREE'">
 		<img src="https://art.hearthstonejson.com/v1/render/latest/enUS/256x/{{card.id}}.png" width="128px"/>
 		<figcaption><h4>x{{card.quantity}}</h4></figcaption>
 	</figure>

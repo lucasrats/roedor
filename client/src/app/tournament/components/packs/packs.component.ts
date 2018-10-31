@@ -26,6 +26,7 @@ export class PacksComponent implements OnInit{
 	public token;
 	public url;
 	public packs;
+	public basics;
 	public common;
 	public rare;
 	public epic;
@@ -59,6 +60,7 @@ export class PacksComponent implements OnInit{
 		this.token = this._userService.getToken();
 		this.url = GLOBAL.url;
 		this.packs = this._tournamentService.packs;
+		this.basics = [];
 		this.common = [];
 		this.rare = [];
 		this.epic = [];
@@ -137,47 +139,52 @@ export class PacksComponent implements OnInit{
 		this._http.get<any>(this.json_card_set).subscribe(
 			data => {
 				data.forEach(card => {
+					//de cara al envío de decks, tenemos que separar las básicas
+					if(card.rarity == 'FREE' && card.type != 'HERO'){
+						this.basics.push({'name': card.name, 'dbfId': card.dbfId, 'rarity': card.rarity});
+					}
 					//Ensure only expert cards from packs are added to each array
 					if (card.collectible == true) {
 						if (card.rarity == 'COMMON') {
-							this.common.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
+							this.common.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 							this.common_name.push(card.name);
 
 							for(var x=0; x<2; x++)
 							{
-								this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
+								this.total_cards_in_set.push([card.name, card.rarity, card.cost, card.dbfId, card.rarity]);
 							}
 
 							//alert(image_prefix + cards.id);
 						}
 						else if (card.rarity == 'RARE') {
-							this.rare.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
+							this.rare.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 							this.rare_name.push(card.name);
 
 							for(var x=0; x<2; x++)
 							{
-								this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
+								this.total_cards_in_set.push([card.name, card.rarity, card.cost, card.dbfId, card.rarity]);
 							}
 						}
 						else if (card.rarity == 'EPIC') {
-							this.epic.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
+							this.epic.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 							this.epic_name.push(card.name);
 
 							for(var x=0; x<2; x++)
 							{
-								this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
+								this.total_cards_in_set.push([card.name, card.rarity, card.cost, card.dbfId, card.rarity]);
 							}
 						}
 						else if (card.rarity == 'LEGENDARY') {
-							this.legendary.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost});
+							this.legendary.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 							this.legendary_name.push(card.name);
 
-							this.total_cards_in_set.push([card.name, card.rarity, card.cost]);
+							this.total_cards_in_set.push([card.name, card.rarity, card.cost, card.dbfId, card.rarity]);
 						}
 					}
 				});
 				//console.log(this.total_cards_in_set);
 				//Pass all this data to getCards which will determine quality and build the image URLs
+				//console.log(this.basics);
 				this.getCards(rolls, this.common, this.rare, this.epic, this.legendary);
 
 			},
@@ -403,7 +410,7 @@ export class PacksComponent implements OnInit{
 			});
 
 			if(found == false){
-				this.json_cards_pool_to_send.push({'id': cardCut, 'quantity': 1, 'cost': card.cost});
+				this.json_cards_pool_to_send.push({'id': cardCut, 'quantity': 1, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 			}
 		});
 		this.json_cards_pool_to_send.sort((a, b) => parseInt(a.cost) - parseInt(b.cost));
