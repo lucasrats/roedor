@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { routing, appRoutingProviders } from './app.routing';
 import { MomentModule } from 'angular2-moment';
 import { PushNotificationsModule } from 'ng-push';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 
 import { MessagesModule } from './messages/messages.module';
 import { TournamentModule } from './tournament/tournament.module';
@@ -63,6 +64,8 @@ import { UserGuard } from './services/user.guard';
     HttpClientModule,
     MomentModule,
     PushNotificationsModule,
+    FroalaEditorModule.forRoot(),
+    FroalaViewModule.forRoot(),
     MessagesModule,
     TournamentModule
   ],

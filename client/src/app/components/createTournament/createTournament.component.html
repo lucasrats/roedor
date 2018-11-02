@@ -82,7 +82,8 @@
 		</div>
     <div class="form-group">
       <label for="rules">Reglas del Torneo</label>
-      <textarea class="form-control" id="rules" name="rules" rows="3" #rules="ngModel" [(ngModel)]="tournament.rules"></textarea>
+      <!--<textarea class="form-control" id="rules" name="rules" rows="3" #rules="ngModel" [(ngModel)]="tournament.rules"></textarea>-->
+			<div id="rules" name="rules" #rules="ngModel" [(ngModel)]="tournament.rules" [froalaEditor]>Hello, Froala!</div>
     </div>
 
     <button type="submit" class="btn btn-primary" [disabled]="!createTournamentForm.form.valid">Enviar</button>

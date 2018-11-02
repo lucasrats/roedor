@@ -16,8 +16,7 @@
       <div class="card-header">
         Reglas del torneo
       </div>
-      <div class="card-body" *ngIf="tournament && tournament.rules">
-        {{tournament.rules}}
+      <div class="card-body" *ngIf="tournament && tournament.rules" [innerHTML]="tournament.rules">
       </div>
     </div>
   </div>

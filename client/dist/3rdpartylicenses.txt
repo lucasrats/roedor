@@ -522,6 +522,10 @@ MIT
 MIT
 MIT
 
+angular-froala-wysiwyg@2.9.0
+MIT
+MIT
+
 @angular/router@5.2.11
 MIT
 MIT
