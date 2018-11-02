@@ -132,6 +132,7 @@ export class PacksComponent implements OnInit{
 		//Get five new card rolls
 		var rolls = this.getCardDistribution();
 		var jsonCards;
+		var setTemporal = [];
 
 		//If the card arrays aren't already filled...
 		if (!this.common.length) {
@@ -143,8 +144,16 @@ export class PacksComponent implements OnInit{
 					if(card.rarity == 'FREE' && card.type != 'HERO'){
 						this.basics.push({'name': card.name, 'dbfId': card.dbfId, 'rarity': card.rarity});
 					}
+					//TEMPORAL PARA SACAR EL JSON POR SETS
+					/*
+					if(card.set == 'UNGORO' && card.type != 'HERO'){
+						setTemporal.push({'id': card.id, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
+					}
+					*/
+
 					//Ensure only expert cards from packs are added to each array
-					if (card.collectible == true) {
+					//TODO De momento filtramos el estándar así. Arreglarlo
+					if (card.collectible == true && card.rarity != 'FREE' &&  ['CORE', 'UNGORO', 'ICECROWN', 'LOOTAPALOOZA', 'GILNEAS', 'BOOMSDAY'].includes(card.set)){
 						if (card.rarity == 'COMMON') {
 							this.common.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 							this.common_name.push(card.name);
@@ -184,7 +193,7 @@ export class PacksComponent implements OnInit{
 				});
 				//console.log(this.total_cards_in_set);
 				//Pass all this data to getCards which will determine quality and build the image URLs
-				//console.log(this.basics);
+				//console.log(setTemporal);
 				this.getCards(rolls, this.common, this.rare, this.epic, this.legendary);
 
 			},

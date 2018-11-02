@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { Tournament } from '../../models/tournament';
 import { TournamentService } from '../../services/tournament.service';
 import { UserService } from '../../services/user.service';

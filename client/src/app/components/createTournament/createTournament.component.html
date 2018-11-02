@@ -83,7 +83,7 @@
     <div class="form-group">
       <label for="rules">Reglas del Torneo</label>
       <!--<textarea class="form-control" id="rules" name="rules" rows="3" #rules="ngModel" [(ngModel)]="tournament.rules"></textarea>-->
-			<div id="rules" name="rules" #rules="ngModel" [(ngModel)]="tournament.rules" [froalaEditor]>Hello, Froala!</div>
+			<editor id="rules" name="rules" #rules="ngModel" apiKey="h9n3k93gj92d2q549cd67va8wzrzya1zn85zo2druja4lro0" [(ngModel)]="tournament.rules"></editor>
     </div>
 
     <button type="submit" class="btn btn-primary" [disabled]="!createTournamentForm.form.valid">Enviar</button>
