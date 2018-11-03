@@ -13,7 +13,7 @@ var multipart = require('connect-multiparty');
 api.post('/tournament/create', md_auth.ensureAuth, TournamentController.saveTournament);
 api.get('/tournament/:id', TournamentController.getTournament);
 api.get('/tournaments/:page?', TournamentController.getTournaments);
-api.put('/tournament/:id', md_auth.ensureAuth, TournamentController.updateTournament);
+api.put('/tournament/:id', TournamentController.updateTournament);
 api.get('/tournament/:id/joined', md_auth.ensureAuth, TournamentController.isParticipant);
 api.post('/tournament/join/:id', md_auth.ensureAuth, TournamentController.joinTournament);
 api.delete('/tournament/unjoin/:id', md_auth.ensureAuth, TournamentController.unjoinTournament);

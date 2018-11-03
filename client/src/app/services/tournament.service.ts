@@ -27,7 +27,7 @@ export class TournamentService{
 	}
 
 	getTournament(token, id): Observable<any>{
-		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+		let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
 		return this._http.get(this.url + 'tournament/' + id , {headers: headers});
 	}
@@ -39,7 +39,7 @@ export class TournamentService{
 	}
 
 	getParticipants(token, id): Observable<any>{
-		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+		let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
 		return this._http.get(this.url + 'tournament/' + id + '/participants', {headers: headers});
 	}
@@ -70,13 +70,13 @@ export class TournamentService{
 	}
 
 	getMatches(token, id): Observable<any>{
-		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+		let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
 		return this._http.get(this.url + 'tournament/' + id + '/matches', {headers: headers});
 	}
 
 	getStandings(token, id): Observable<any>{
-		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+		let headers = new HttpHeaders().set('Content-Type', 'application/json');
 
 		return this._http.get(this.url + 'tournament/' + id + '/standings', {headers: headers});
 	}
