@@ -241,4 +241,22 @@ export class DecksComponent implements OnInit{
 		);
 	}
 
+	removeDeck(deckCode){
+
+		this._tournamentService.removeDeckTournament(this.token, this._parentComponent.tournamentId, deckCode).subscribe(
+			response => {
+				if(response.message){
+					this.deckByCode = [];
+					this.getCards();
+				}
+			},
+			error => {
+				var errorMessage = <any>error;
+				if(errorMessage != null){
+					this.status = 'error';
+				}
+			}
+		);
+	}
+
 }

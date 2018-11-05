@@ -121,4 +121,11 @@ export class TournamentService{
 		return this._http.post(this.url + 'tournament/' + id + '/participant/newPack', pack, {headers: headers});
 	}
 
+	removeDeckTournament(token, id, code): Observable<any>{
+		let params = JSON.parse('{\"code\": \"' + code + '\"}');
+		let headers = new HttpHeaders().set('Content-Type', 'application/json').set('Authorization', token);
+
+		return this._http.post(this.url + 'tournament/' + id + '/participant/removeDeck', params, {headers: headers});
+	}
+
 }

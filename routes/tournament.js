@@ -25,6 +25,7 @@ api.post('/tournament/nextround/:id', md_auth.ensureAuth, TournamentController.n
 api.get('/tournament/:id/participants', TournamentController.getParticipants);
 api.get('/tournament/:tournament/participant/:user', TournamentController.getParticipant);
 api.post('/tournament/:tournament/participant/newDeck', md_auth.ensureAuth, TournamentController.addDeckCode);
+api.post('/tournament/:tournament/participant/removeDeck', md_auth.ensureAuth, TournamentController.removeDeck);
 api.post('/tournament/:tournament/participant/newPack', md_auth.ensureAuth, TournamentController.addCardsPool);
 api.get('/tournament/:id/matches', TournamentController.getMatches);
 api.get('/tournament/:id/standings', TournamentController.getStandings);

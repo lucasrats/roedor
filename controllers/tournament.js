@@ -953,6 +953,51 @@ function addDeckCode(req, res){
 	});
 }
 
+function removeDeck(req, res){
+
+	var tournamentId = req.params.tournament;
+
+	var update = req.body;
+
+	Participant.findOne({tournament: tournamentId, user: req.user.sub}, (err, participant) => {
+		if(err) return res.status(500).send({message: err});
+
+		if(!participant) return res.status(404).send({message: 'No existe ese jugador'});
+
+		var decks = JSON.parse(participant.decks);
+
+		for (var i = decks.length - 1; i >= 0; --i) {
+		  if (decks[i].code == update.code) {
+		    decks.splice(i, 1);
+		  }
+		}
+
+		var decksToStore = JSON.stringify(decks);
+
+		//comprobamos el número de decks que va a tener el usuario, para marcar el checkin como true
+		Tournament.findById(tournamentId).exec((err, tournament) => {
+				if(err) return res.status(500).send({message: err});
+
+				if(!tournament) return res.status(404).send({message: 'Ocurrió un error al buscar el torneo'});
+
+				var checkin = false;
+				if(tournament.decks == decks.length){
+					checkin = true;
+				}
+
+				Participant.update({_id: participant._id}, { decks: decksToStore, checkin: checkin }, { multi: false }, (err, participantUpdated) => {
+					if(err) return res.status(500).send({message: err});
+
+					if(!participantUpdated) return res.status(404).send({message: 'Ocurrió un error al guardar el mazo'});
+
+					//return res.status(200).send({deck: {name: update.name, code: update.code}});
+					return res.status(200).send({message: 'Borrado con éxito'});
+				});
+		});
+	});
+
+}
+
 function addCardsPool(req, res){
 
 	var tournamentId = req.params.tournament;
@@ -1037,5 +1082,6 @@ module.exports = {
 	getStandings,
 	isAdminTournament,
 	addDeckCode,
-	addCardsPool
+	addCardsPool,
+	removeDeck
 }
