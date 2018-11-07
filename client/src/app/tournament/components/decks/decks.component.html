@@ -39,7 +39,7 @@
 <hr>
 <div class="row">
     <div class="col-sm" *ngFor="let deck of decks">
-      <p class="text-center font-weight-bold">{{deck.name}} <button type="button" class="btn btn-danger btn-sm" (click)="removeDeck(deck.code)"><i class="fa fa-remove"></i></button></p>
+      <p class="font-weight-bold">{{deck.name}} <button type="button" class="btn btn-danger btn-sm" (click)="removeDeck(deck.code)"><i class="fa fa-remove"></i></button></p>
       <div *ngFor="let card of deck.deck.cards">
         <div class="card-list">
           <ul>
