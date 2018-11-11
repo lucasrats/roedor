@@ -153,7 +153,7 @@ export class PacksComponent implements OnInit{
 
 					//Ensure only expert cards from packs are added to each array
 					//TODO De momento filtramos el estándar así. Arreglarlo
-					if (card.collectible == true && card.rarity != 'FREE' &&  ['CORE', 'UNGORO', 'ICECROWN', 'LOOTAPALOOZA', 'GILNEAS', 'BOOMSDAY'].includes(card.set)){
+					if (card.collectible == true && card.rarity != 'FREE' &&  ['CORE', 'EXPERT1', 'UNGORO', 'ICECROWN', 'LOOTAPALOOZA', 'GILNEAS', 'BOOMSDAY'].includes(card.set)){
 						if (card.rarity == 'COMMON') {
 							this.common.push({'url': image_prefix + card.id + image_postfix, 'cost': card.cost, 'dbfId': card.dbfId, 'rarity': card.rarity});
 							this.common_name.push(card.name);
