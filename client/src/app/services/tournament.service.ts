@@ -14,9 +14,11 @@ export class TournamentService{
 	public participants: Participant[];
 	public bo;
 	public packs;
+	public enableMatch: boolean;
 
 	constructor(public _http: HttpClient){
 		this.url = GLOBAL.url;
+		this.enableMatch = false;
 	}
 
   getTournaments(token, page): Observable<any>{

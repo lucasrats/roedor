@@ -43,6 +43,14 @@
 				</span>
 			</p>
 
+			<p>
+				<label>BattleNet <img src="/assets/images/battlenet_icon.png" width="30" /></label>
+				<input type="battletag" name="battletag" #battletag="ngModel" [(ngModel)]="user.battletag" class="form-control" required />
+				<span *ngIf="!battletag.valid && battletag.touched">
+					El battletag es obligatorio
+				</span>
+			</p>
+
 			<div *ngIf="user.image">
 				<img src="{{ url + 'get-image-user/' + user.image }}" />
 			</div>

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Tournament } from '../../../models/tournament';
 import { Participant } from '../../../models/participant';
 import { Match } from '../../../models/match';
@@ -10,6 +11,7 @@ import { MatchService } from '../../../services/match.service';
 import { MainComponent } from '../main/main.component';
 import { AppComponent	} from '../../../app.component';
 import * as io from 'socket.io-client';
+import { encode, decode } from "deckstrings";
 
 @Component({
 	selector: 'match',
@@ -36,9 +38,11 @@ export class MatchComponent implements OnInit{
 	public sent: boolean;
 	private homeClassesFinal;
 	private awayClassesFinal;
+	public decks;
+	public total_cards_in_set;
 
 	constructor(
-
+		private _http: HttpClient,
 		private _route: ActivatedRoute,
 		private _router: Router,
 		private _userService: UserService,
@@ -70,9 +74,20 @@ export class MatchComponent implements OnInit{
 		this.awayClassesFinal = [];
 		this.chatHistory = [];
 		this.sent = false;
+		this.decks = [];
+		this.total_cards_in_set = [];
 	}
 
 	ngOnInit(){
+		this._route.params.subscribe(params => {
+	    if(params['match']){
+	     this._tournamentService.enableMatch = true;
+	    }else{
+	     this._tournamentService.enableMatch = false;
+	    }
+	  });
+		console.log(this._tournamentService.enableMatch);
+
 		var room = this.matchId;
     this.actualMatch();
     this.getMatch();
@@ -145,12 +160,22 @@ export class MatchComponent implements OnInit{
 							if(this.match.metadata){
 								metadata = JSON.parse(this.match.metadata);
 							}
+							//si el partido ha acabado, mostramos los decks del adversario
+							if(this.match.status >= 4){
+								if(this.identity._id == this.match.home._id){
+									this.getCards(this.match.away._id);
+								}
+								else if(this.identity._id == this.match.away._id){
+									this.getCards(this.match.home._id);
+								}
+
+							}
 							//según sea home o away, tildamos los checks
 							if(this.match.status >= 3){
 								//pillamos las clases finales de cada uno
 								this.homeClassesFinal = JSON.parse(JSON.stringify(metadata.homeClassesFinal));
 								this.awayClassesFinal = JSON.parse(JSON.stringify(metadata.awayClassesFinal));
-								console.log(this.homeClassesFinal);
+								//console.log(this.homeClassesFinal);
 								/*
 								for (var key in metadata.homeClassesFinal) {
 										this.homeClassesFinal.push(metadata.homeClassesFinal[key]);
@@ -553,6 +578,92 @@ export class MatchComponent implements OnInit{
 			}
 		}
 
+	}
+
+	getCards(opponentId){
+			if(this.env == 'DE'){
+				var json_card_set = 'http://localhost:4200/assets/sobres/data/cards.collectible_es_ES.json';
+			}
+			else{
+				var json_card_set = 'https://roedor.net/assets/sobres/data/cards.collectible_es_ES.json';
+			}
+
+			this._http.get<any>(json_card_set).subscribe(
+				data => {
+					data.forEach(card => {
+						//Ensure only expert cards from packs are added to each array
+						if (card.collectible == true) {
+							this.total_cards_in_set.push({dbFid: card.dbfId, id: card.id, name: card.name, cost: card.cost, rarity: card.rarity.toLowerCase()});
+						}
+					});
+
+					this._tournamentService.getParticipant(this.token, this._parentComponent.tournamentId, opponentId).subscribe(
+						response => {
+							if(response.participant){
+								//console.log(response.participant);
+								this.decks = JSON.parse(response.participant.decks);
+
+								this.decks.forEach(deckST => {
+									deckST.deck = decode(deckST.code);
+								});
+								//console.log(this.decks);
+
+								this.decks.forEach(deck => {
+									deck.deck.cards.forEach(card => {
+										let secondElement = this.total_cards_in_set.find(function(item){
+											return item.dbFid == card[0];
+										});
+
+										if(secondElement != null){
+											card.id = secondElement.id;
+											card.name = secondElement.name;
+											card.cost = secondElement.cost;
+											card.rarity = secondElement.rarity;
+										}
+									});
+									deck.deck.cards.sort(this.compareValues("cost"));
+								});
+
+							}
+						},
+						error => {
+							var errorMessage = <any>error;
+							if(errorMessage != null){
+								this.status = 'error';
+							}
+						}
+					);
+
+				},
+				err => {
+					console.log(err);
+				}
+			);
+	}
+
+	// function for dynamic sorting
+	compareValues(key, order='asc') {
+	  return function(a, b) {
+	    if(!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+	      // property doesn't exist on either object
+	        return 0;
+	    }
+
+	    const varA = (typeof a[key] === 'string') ?
+	      a[key].toUpperCase() : a[key];
+	    const varB = (typeof b[key] === 'string') ?
+	      b[key].toUpperCase() : b[key];
+
+	    let comparison = 0;
+	    if (varA > varB) {
+	      comparison = 1;
+	    } else if (varA < varB) {
+	      comparison = -1;
+	    }
+	    return (
+	      (order == 'desc') ? (comparison * -1) : comparison
+	    );
+	  };
 	}
 
 }

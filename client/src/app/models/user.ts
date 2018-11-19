@@ -8,6 +8,7 @@ export class User{
 		public password: string,
 		public role: string,
 		public image: string,
-		public token: string
+		public token: string,
+		public battletag: string
 	){}
 }

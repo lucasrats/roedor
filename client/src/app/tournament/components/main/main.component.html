@@ -35,10 +35,11 @@
 
   </div>
 
-  <nav class="nav nav-pills flex-column flex-sm-row">
+  <nav class="nav nav-pills nav-fill flex-column flex-sm-row">
     <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['lobby']">Lobby</a>
     <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['rules']">Reglas</a>
-    <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['bracket']">Bracket/Partidos</a>
+    <!--<a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['bracket']">Bracket/Partidos</a>-->
+    <a class="flex-sm-fill text-sm-center nav-link" routerLinkActive="active" [ngClass]= "{'active': _tournamentService.enableMatch}" routerLink="bracket">Bracket/Partidos</a>
     <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['packs']" *ngIf="participant && tournament.draft > 0">Sobres <span class="badge badge-light">{{_tournamentService.packs}}</span></a>
     <a class="flex-sm-fill text-sm-center nav-link" [routerLinkActive]="['active']" [routerLink]="['decks']" *ngIf="participant && tournament.decks > 0">Mazos</a>
   </nav>

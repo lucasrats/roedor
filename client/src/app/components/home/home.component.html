@@ -1,9 +1,9 @@
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center" *ngIf="!identity">
   <h1 class="display-4">¡Hola!</h1>
   <p class="lead">Estamos de vuelta, se han cambiado muchas cosas por debajo, pero si lo único que te interesa es jugar. Ve echando un ojo al apartado de torneos.</p>
 </div>
 
-<div class="container">
+<div class="container" *ngIf="!identity">
   <div class="card-deck mb-3 text-center">
     <div class="card mb-4 box-shadow">
       <div class="card-header">
@@ -34,4 +34,37 @@
     </div>
     <iframe src="https://discordapp.com/widget?id=280013477106417669&theme=dark" width="350" height="350" allowtransparency="true" frameborder="0"></iframe>
   </div>
+</div>
+
+<div class="container-fluid" *ngIf="identity">
+  <div class="row">
+    <div class="col-md-8">
+      <h2>Próximos partidos</h2>
+      <table class="table">
+			  <thead>
+			    <tr>
+			      <th style="width: 20%" scope="col">Partido</th>
+            <th style="width: 20%" scope="col">Torneo</th>
+			      <th style="width: 20%" scope="col">Fecha</th>
+            <th style="width: 20%" scope="col">Resultado</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr *ngFor="let match of matches" class="item-publication" [ngClass]="checkStatusScore(match)">
+			      <th scope="row"><a [routerLink]="['/tournament/', match.tournament._id, 'match', match._id]">{{match.home.nick}} vs {{match.away.nick}}</a></th>
+            <td>{{match.tournament.name}}</td>
+			      <td>{{ (match.match_date | amFromUnix | amLocale:'es')}}</td>
+            <td *ngIf="match.status >= 4">{{match.homeScore}} - {{match.awayScore}}</td>
+            <td *ngIf="match.status < 4">Por disputar</td>
+			    </tr>
+			  </tbody>
+			</table>
+    </div>
+
+    <div class="col-md-4">
+      <iframe src="https://discordapp.com/widget?id=280013477106417669&theme=dark" width="350" height="350" allowtransparency="true" frameborder="0"></iframe>
+    </div>
+
+  </div>
+
 </div>

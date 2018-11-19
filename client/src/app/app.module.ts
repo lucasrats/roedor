@@ -33,6 +33,7 @@ import { MatchesComponent } from './components/matches/matches.component';
 // Servicios
 import { UserService } from './services/user.service';
 import { UserGuard } from './services/user.guard';
+import { AdminGuard } from './services/admin.guard';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { UserGuard } from './services/user.guard';
   providers: [
     appRoutingProviders,
     UserService,
-    UserGuard
+    UserGuard,
+    AdminGuard
   ],
   bootstrap: [AppComponent]
 })

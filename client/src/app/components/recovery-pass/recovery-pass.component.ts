@@ -29,7 +29,7 @@ export class RecoveryPassComponent implements OnInit{
 	){
 		this.title = 'Restablecer contraseña';
 		this.url = GLOBAL.url;
-    this.user = new User("","","","","","","ROLE_USER","", "");
+    this.user = new User("","","","","","","ROLE_USER","", "", "");
 	}
 
 	ngOnInit(){

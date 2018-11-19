@@ -19,6 +19,7 @@ import { AdminComponent } from './components/admin/admin.component';
 import { MatchesComponent } from './components/matches/matches.component';
 
 import { UserGuard } from './services/user.guard';
+import { AdminGuard } from './services/admin.guard';
 
 const appRoutes: Routes = [
 	{path: '', component: HomeComponent},
@@ -38,7 +39,7 @@ const appRoutes: Routes = [
 	{path: 'tournaments', component: TournamentsComponent},
 	{path: 'crear-torneo', component: CreateTournamentComponent, canActivate:[UserGuard]},
 	//rutas ADMIN
-	{path: 'admin', component: AdminComponent, canActivate:[UserGuard]},
+	{path: 'admin', component: AdminComponent, canActivate:[AdminGuard]},
 	//ruta 404
 	{path: '**', component: HomeComponent}
 

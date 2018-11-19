@@ -36,6 +36,7 @@ export class MainComponent implements OnInit{
 	}
 
 	ngOnInit(){
+
 		//console.log('main11.component cargado');
 		this.actualTournament();
 		this.getTournament();

@@ -79,8 +79,8 @@
                 <div class="card-body text-center" *ngIf="match.status > 3">
                     <div class="card-text">
                       <h1 class="font-weight-bold">{{match.homeScore}}</h1>
-                      <span class="badge badge-danger" *ngIf="match.homeScore < match.awayScore">Loss</span>
-                      <span class="badge badge-success" *ngIf="match.homeScore > match.awayScore">Win</span>
+                      <span class="badge badge-danger" *ngIf="match.homeScore < match.awayScore">Derrota</span>
+                      <span class="badge badge-success" *ngIf="match.homeScore > match.awayScore">Victoria</span>
                     </div>
                 </div>
             </div>
@@ -102,8 +102,8 @@
                 <div class="card-body text-center" *ngIf="match.status > 3">
                     <div class="card-text">
                       <h1 class="font-weight-bold">{{match.awayScore}}</h1>
-                      <span class="badge badge-danger" *ngIf="match.awayScore < match.homeScore">Loss</span>
-                      <span class="badge badge-success" *ngIf="match.awayScore > match.homeScore">Win</span>
+                      <span class="badge badge-danger" *ngIf="match.awayScore < match.homeScore">Derrota</span>
+                      <span class="badge badge-success" *ngIf="match.awayScore > match.homeScore">Victoria</span>
                     </div>
                 </div>
             </div>
@@ -111,11 +111,34 @@
             <button class="btn btn-success btn-lg btn-block" [disabled]="!match.homeScore || !match.awayScore" (click)="sendResult()" *ngIf="match.status == 3">Enviar resultado</button>
             <!--<input type="submit" value="Enviar resultado" class="btn btn-warning" [disabled]="!resultForm.form.valid" />
           </form>-->
+          <h2>Mazos del adversario</h2>
+          <div class="row" *ngIf="match.status >= 4">
+              <div class="col-sm" *ngFor="let deck of decks">
+                <div *ngFor="let card of deck.deck.cards">
+                  <div class="card-list">
+                    <ul>
+                      <li class="card-frame {{card.rarity}}-card ">
+                        <span class="card-cost">{{card.cost}}</span>
+                        <span class="card-name">{{card.name}}</span>
+                        <span class="card-count">{{card[1]}}</span>
+                        <span class="card-image card-count-ex">
+                          <img src="https://art.hearthstonejson.com/v1/tiles/{{card.id}}.png" height="40px">
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <div class="col-md-4">
+    <ul class="list-group">
+      <li class="list-group-item"><label>{{match.home.battletag}} <img src="/assets/images/battlenet_icon.png" width="30" /></label></li>
+      <li class="list-group-item"><label>{{match.away.battletag}} <img src="/assets/images/battlenet_icon.png" width="30" /></label></li>
+    </ul>
     <div id="message-wrap" class="message-wrap">
       <div id="msg-wrap" class="msg-wrap">
           <div class="media msg" *ngFor="let chat of chatHistory">
